@@ -12,11 +12,11 @@ echo "&lt;script&gt;window.location.href='http://www.salesforce.com/us/developer
 
 </string>
 	<key>input</key>
-	<string>selection</string>
+	<string>none</string>
 	<key>name</key>
 	<string>Apex Reference</string>
 	<key>output</key>
-	<string>replaceSelectedText</string>
+	<string>showAsHTML</string>
 	<key>uuid</key>
 	<string>F7CB2F01-5751-4DE3-9A40-28E580C09440</string>
 </dict>

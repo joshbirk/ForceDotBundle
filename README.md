@@ -3,18 +3,16 @@ This project is the end result of cleaning up some shell scripts I had been tink
 for using with the Force.com Migration Tool and the OS X editor TextMate.  They could be 
 potentially be used as standalone shell scripts, but I'll gather those in a different project.
 
-<P>
+<h1>Requirements</h1>
 You will need to download and setup the Force.com Migration Tool, which is fairly straightforward 
 in OS X.  Just go to "Setup -> Develop -> Tools" in your org and download the zip and follow the 
 instructions.  You might need to run "ant -diagnostics" to find your ant lib directory.
-</P>
 
-<P>
-There is now a zip file with the tmbundle if you prefer to just download that and double click.  After that, you may need to run:
-<pre>
-chmod -R 775 ~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools
-</pre>
-Or otherwise set the permissions as you see fit to get all the various commands to run.
+<h1>Installation</h1>
+<OL>
+	<LI> After cloning/forking/downloading - rename the parent directory to be "ForceDotBundle.tmBundle".
+	<LI> Double click the renamed folder.
+	
 
 <P>
 <B>Note:</B> This is unofficial, unsupported software.
@@ -76,6 +74,11 @@ The bundle provides the following:
 		<UL>
 			<LI>Production Test: This will do a check only, run all tests, deploy against the production org
 			<LI>Production Deploy: This will run all tests and deploy against the production org
+		</UL>
+		<LI>Keychain
+		<UL>
+			<LI>Add Password: Highlighted text in the format "password:accountname" will add a new password to Keychain under accountname and replace the text with accountname.
+			<LI>Lock Keychain: Locks keychain and requires a password for later use.
 		</UL>
 	</OL>
 </UL>

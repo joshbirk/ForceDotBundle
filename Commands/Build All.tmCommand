@@ -2,21 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>changed</key>
-	<dict>
-		<key>command</key>
-		<string>echo "&lt;h1&gt;Running All Tests&lt;/h1&gt;"
-echo "&lt;div style='border:1px solid #ccc; padding: 5px; font-size: 9px'&gt;&lt;pre&gt;"
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>echo "&lt;h1&gt;Building Project&lt;/h1&gt;"
 cd $TM_PROJECT_DIRECTORY
+echo "&lt;div style='background-color:#ccc'&gt;&lt;pre&gt;;"
 . build.properties
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
-	shellpassword=$(~/bin/keychain.sh ${password})
+	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
 	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
 	cp new.properties build.back
 	cp new.properties build.properties
 fi
-ant test
+
+ant build-all
+
 if [ ${usekeychainaccess} == 'enabled' ]
 	then
 	sed "s/${shellpassword}/${password}/" build.properties &gt; new.properties
@@ -27,14 +29,15 @@ if [ ${usekeychainaccess} == 'enabled' ]
 fi
 echo "&lt;/pre&gt;&lt;/div&gt;"
 echo "&lt;hr&gt;Done"</string>
-		<key>keyEquivalent</key>
-		<string>^~@t</string>
-	</dict>
-	<key>deleted</key>
-	<array/>
-	<key>isDelta</key>
-	<true/>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>^~@b</string>
+	<key>name</key>
+	<string>Build All</string>
+	<key>output</key>
+	<string>showAsHTML</string>
 	<key>uuid</key>
-	<string>EB75C41E-51E3-4285-B87C-49CF7BF9401C</string>
+	<string>2DB11752-ECAB-4537-AE5D-D093C85E711B</string>
 </dict>
 </plist>

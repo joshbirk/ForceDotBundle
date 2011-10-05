@@ -2,22 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>changed</key>
-	<dict>
-		<key>command</key>
-		<string>echo "&lt;h1&gt;Building Project&lt;/h1&gt;"
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>echo "&lt;h1&gt;Getting Latest From Server&lt;/h1&gt;"
+echo "&lt;div style='border:1px solid #ccc; padding: 5px;'&gt;&lt;pre&gt;"
+
 cd $TM_PROJECT_DIRECTORY
-echo "&lt;div style='background-color:#ccc'&gt;&lt;pre&gt;"
 . build.properties
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
-	shellpassword=$(~/bin/keychain.sh ${password})
+	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
 	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
 	cp new.properties build.back
 	cp new.properties build.properties
 fi
 
-ant build-all
+ant getLatest
 
 if [ ${usekeychainaccess} == 'enabled' ]
 	then
@@ -27,16 +28,18 @@ if [ ${usekeychainaccess} == 'enabled' ]
 	rm new.properties
 	rm build.back
 fi
+
 echo "&lt;/pre&gt;&lt;/div&gt;"
-echo "&lt;hr&gt;Done"</string>
-		<key>keyEquivalent</key>
-		<string>^~@b</string>
-	</dict>
-	<key>deleted</key>
-	<array/>
-	<key>isDelta</key>
-	<true/>
+echo "&lt;hr&gt;Done.  Updates may not be visible in the TextMate project right away."</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>^@l</string>
+	<key>name</key>
+	<string>Get Latest</string>
+	<key>output</key>
+	<string>showAsHTML</string>
 	<key>uuid</key>
-	<string>14A0B9A5-2FDD-4732-AA30-3373A8651E15</string>
+	<string>5B3012C0-BF85-4C2E-BDC4-F7F5393E5443</string>
 </dict>
 </plist>

@@ -12,7 +12,7 @@ cd $TM_PROJECT_DIRECTORY
 . build.properties
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
-	shellpassword=$(~/bin/keychain.sh ${prodpassword})
+	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${prodpassword})
 	sed "s/${prodpassword}/${shellpassword}/" build.properties &gt; new.properties
 	cp new.properties build.back
 	cp new.properties build.properties
