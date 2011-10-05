@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>cd $TM_PROJECT_DIRECTORY
+. build.properties
+
+echo "&lt;script&gt;window.location.href='https://${pod}.salesforce.com/apexpages/apexcomponents.apexp'&lt;/script&gt;"
+
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>name</key>
+	<string>Visualforce Reference</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>uuid</key>
+	<string>4FF886A1-4D4E-4A56-8D82-9D0F7B50E569</string>
+</dict>
+</plist>

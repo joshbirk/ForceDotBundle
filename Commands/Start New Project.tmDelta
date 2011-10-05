@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>changed</key>
+	<dict>
+		<key>command</key>
+		<string>echo "&lt;h1&gt;Creating new project&lt;/h1&gt;"
+cd $TM_PROJECT_DIRECTORY
+
+mkdir classes
+mkdir components
+mkdir pages
+mkdir triggers
+mkdir tmp
+
+echo "&lt;h3&gt;Directories built&lt;/h3&gt;"
+
+cd tmp
+mkdir classes
+mkdir components
+mkdir pages
+mkdir triggers
+
+echo "&lt;h3&gt;Temp directory built&lt;/h3&gt;"
+
+cd ..
+
+echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Package xmlns="http://soap.sforce.com/2006/04/metadata"&gt;
+    &lt;types&gt;
+        &lt;members&gt;*&lt;/members&gt;
+        &lt;name&gt;ApexClass&lt;/name&gt;
+    &lt;/types&gt;
+    &lt;types&gt;
+        &lt;members&gt;*&lt;/members&gt;
+        &lt;name&gt;ApexComponent&lt;/name&gt;
+    &lt;/types&gt;
+    &lt;types&gt;
+        &lt;members&gt;*&lt;/members&gt;
+        &lt;name&gt;ApexPage&lt;/name&gt;
+    &lt;/types&gt;
+    &lt;types&gt;
+        &lt;members&gt;*&lt;/members&gt;
+        &lt;name&gt;ApexTrigger&lt;/name&gt;
+    &lt;/types&gt;
+    &lt;types&gt;
+        &lt;members&gt;*&lt;/members&gt;
+        &lt;name&gt;StaticResource&lt;/name&gt;
+    &lt;/types&gt;
+    &lt;version&gt;22.0&lt;/version&gt;
+&lt;/Package&gt;' &gt; 'package.xml'
+
+echo 'username=DEVUSER
+password=DEVPASSWORD:KEYCHAINACCOUNT
+serverurl=https://login.salesforce.com
+usekeychainaccess=enabled
+pod=na#
+produsername=PRODUSER 
+prodpassword=PRODPWD:KEYCHAINACCOUNT
+' &gt; 'build.properties'
+
+echo '&lt;project default="build-all" basedir="." xmlns:sf="antlib:com.salesforce"&gt;
+
+    &lt;property file="build.properties"/&gt;
+    &lt;property environment="env"/&gt;
+
+    &lt;target name="build"&gt;
+      &lt;sf:deploy username="${username}" password="${password}" serverurl="${serverurl}" deployRoot="tmp"/&gt;
+    &lt;/target&gt;
+
+	&lt;target name="build-all"&gt;
+      &lt;sf:deploy username="${username}" password="${password}" serverurl="${serverurl}" deployRoot="./"/&gt;
+    &lt;/target&gt;
+
+	&lt;target name="test"&gt;
+      &lt;sf:deploy username="${username}" password="${password}" serverurl="${serverurl}" deployRoot="./" runAllTests="true" checkOnly="true"/&gt;
+    &lt;/target&gt;
+
+     &lt;target name="getLatest"&gt;
+	  &lt;sf:retrieve 
+	      username="${username}" 
+	      password="${password}" 
+	      serverurl="${serverurl}" 
+	      retrieveTarget="./" 
+		  pollWaitMillis="10000"
+  		  maxPoll="100"
+	      unpackaged="./package.xml"/&gt;
+	&lt;/target&gt;
+	
+	&lt;target name="deployToProdTest"&gt;
+      &lt;sf:deploy username="${produsername}" password="${prodpassword}" serverurl="${prodserverurl}" deployRoot="./" runAllTests="true" checkOnly="true"/&gt;
+    &lt;/target&gt;
+
+	&lt;target name="deployToProdReal"&gt;
+      &lt;sf:deploy username="${produsername}" password="${prodpassword}" serverurl="${prodserverurl}" deployRoot="./" runAllTests="true" checkOnly="false"/&gt;
+    &lt;/target&gt;
+	
+&lt;/project&gt;' &gt; 'build.xml'
+
+echo "&lt;h3&gt;Build files set&lt;/h3&gt;"
+echo "&lt;h3&gt;Done.  May take awhile for TextMate to refresh parent directory.  You can refresh by viewing the folder in Finder.&lt;/h3&gt;"
+</string>
+	</dict>
+	<key>deleted</key>
+	<array>
+		<string>keyEquivalent</string>
+		<string>scope</string>
+	</array>
+	<key>isDelta</key>
+	<true/>
+	<key>uuid</key>
+	<string>29F01409-F94E-4AEE-A214-3DF5D2FB8DEA</string>
+</dict>
+</plist>

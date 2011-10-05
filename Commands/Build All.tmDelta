@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>changed</key>
+	<dict>
+		<key>command</key>
+		<string>echo "&lt;h1&gt;Building Project&lt;/h1&gt;"
+cd $TM_PROJECT_DIRECTORY
+echo "&lt;div style='background-color:#ccc'&gt;&lt;pre&gt;"
+. build.properties
+if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	shellpassword=$(~/bin/keychain.sh ${password})
+	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
+	cp new.properties build.back
+	cp new.properties build.properties
+fi
+
+ant build-all
+
+if [ ${usekeychainaccess} == 'enabled' ]
+	then
+	sed "s/${shellpassword}/${password}/" build.properties &gt; new.properties
+	cp new.properties build.back
+	cp new.properties build.properties
+	rm new.properties
+	rm build.back
+fi
+echo "&lt;/pre&gt;&lt;/div&gt;"
+echo "&lt;hr&gt;Done"</string>
+		<key>keyEquivalent</key>
+		<string>^~@b</string>
+	</dict>
+	<key>deleted</key>
+	<array/>
+	<key>isDelta</key>
+	<true/>
+	<key>uuid</key>
+	<string>14A0B9A5-2FDD-4732-AA30-3373A8651E15</string>
+</dict>
+</plist>

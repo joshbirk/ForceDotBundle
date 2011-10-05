@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>cd $TM_PROJECT_DIRECTORY
+
+echo "&lt;h1&gt;Running Tests for ${TM_FILENAME%.*}&lt;/h1&gt;"
+cp build.xml backup-build.xml
+sed "s/#TESTCLASS#/${TM_FILENAME%.*}/" build.xml &gt; result.xml
+cp result.xml build.xml
+echo "&lt;div style='border:1px solid #ccc; padding: 5px; font-size: 9px'&gt;&lt;pre&gt;"
+. build.properties
+if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	shellpassword=$(~/bin/keychain.sh ${password})
+	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
+	cp new.properties build.back
+	cp new.properties build.properties
+fi
+ant currenttest
+if [ ${usekeychainaccess} == 'enabled' ]
+	then
+	sed "s/${shellpassword}/${password}/" build.properties &gt; new.properties
+	cp new.properties build.back
+	cp new.properties build.properties
+	rm new.properties
+	rm build.back
+fi
+echo "&lt;/pre&gt;&lt;/div&gt;"
+sed "s/${TM_FILENAME%.*}/#TESTCLASS#/" build.xml &gt; result.xml
+cp result.xml build.xml
+echo "&lt;hr&gt;Done"</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>^@t</string>
+	<key>name</key>
+	<string>Run Current Tests</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>uuid</key>
+	<string>6C8290A8-8C2F-49A5-98AB-3830C3F28868</string>
+</dict>
+</plist>

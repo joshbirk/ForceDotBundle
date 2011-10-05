@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>echo "&lt;h1&gt;Getting Latest From Server&lt;/h1&gt;"
+echo "&lt;div style='border:1px solid #ccc; padding: 5px;'&gt;&lt;pre&gt;"
+cd $TM_PROJECT_DIRECTORY
+
+. build.properties
+if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	shellpassword=$(~/bin/keychain.sh ${prodpassword})
+	sed "s/${prodpassword}/${shellpassword}/" build.properties &gt; new.properties
+	cp new.properties build.back
+	cp new.properties build.properties
+fi
+
+ant deployToProdTest
+
+if [ ${usekeychainaccess} == 'enabled' ]
+	then
+	sed "s/${shellpassword}/${prodpassword}/" build.properties &gt; new.properties
+	cp new.properties build.back
+	cp new.properties build.properties
+	rm new.properties
+	rm build.back
+fi
+
+echo "&lt;/pre&gt;&lt;/div&gt;"
+echo "&lt;hr&gt;Done."</string>
+	<key>input</key>
+	<string>none</string>
+	<key>name</key>
+	<string>Production Deploy</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>uuid</key>
+	<string>8FE063C4-7E00-4695-AA70-DA92031902D7</string>
+</dict>
+</plist>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#get username and password from project
+cd $TM_PROJECT_DIRECTORY
+. build.properties
+if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	password=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
+fi
+
+
+#go to the HTML widgets folder
+cd ~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools
+dir=$(pwd)
+
+#determine session
+if [ -f ".session" ] 
+	then
+	session=$(cat .session)
+	else
+	session=$(echo  ${username}:${password} | php -q ./loginasme.php)
+	echo $session &gt; .session
+fi
+
+#make REST callout
+query=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${TM_SELECTED_TEXT}")
+echo $query &gt; query
+echo "data = " &gt; data.json
+data=$(curl -s https://${pod}.salesforce.com/services/data/v22.0/query/?q=${query} -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
+echo $data &gt;&gt; data.json
+
+#check to see if session expired
+sessioncheck=$(grep -ic "INVALID_SESSION" "data.json")
+if [ "$sessioncheck" != "0" ]
+	then
+	rm data.json
+	rm .session
+	session=$(echo  ${username}:${password} | php -q ./loginasme.php)
+	echo $session &gt; .session
+	echo "data = " &gt; data.json
+	data=$(curl -s https://${pod}.salesforce.com/services/data/v22.0/query/?q=${query} -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
+	echo $data &gt;&gt; data.json
+fi
+
+#move to HTML widget
+echo "&lt;script&gt;window.location = 'file://${dir}/soql.html'&lt;/script&gt;"
+
+#cleanup
+sleep 3
+rm data.json
+
+</string>
+	<key>fallbackInput</key>
+	<string>document</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>^~@/</string>
+	<key>name</key>
+	<string>Run SOQL</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>uuid</key>
+	<string>F88FB49A-A2FD-4868-94EE-477B26013C66</string>
+</dict>
+</plist>

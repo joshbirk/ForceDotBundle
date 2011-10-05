@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#get username and password from project
+cd $TM_PROJECT_DIRECTORY
+. build.properties
+if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	password=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
+fi
+
+
+#go to the HTML widgets folder
+cd ~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools
+dir=$(pwd)
+
+#determine session
+if [ -f ".session" ] 
+	then
+	session=$(cat .session)
+	else
+	session=$(echo  ${username}:${password} | php -q ./loginasme.php)
+	echo $session &gt; .session
+fi
+
+#make REST callout
+echo "data = " &gt; data.json
+data=$(curl -s https://${pod}.salesforce.com/services/data/v20.0/sobjects/${TM_SELECTED_TEXT}/describe -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
+echo $data &gt;&gt; data.json
+
+#check to see if session expired
+sessioncheck=$(grep -ic "INVALID_SESSION" "data.json")
+if [ "$sessioncheck" != "0" ]
+	then
+	rm data.json
+	rm .session
+	session=$(echo  ${username}:${password} | php -q ./loginasme.php)
+	echo $session &gt; .session
+	echo "data = " &gt; data.json
+	data=$(curl -s https://${pod}.salesforce.com/services/data/v22.0/sobjects/${TM_SELECTED_TEXT}/	describe -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
+	echo $data &gt;&gt; data.json
+fi
+
+#move to HTML widget
+echo "&lt;script&gt;window.location = 'file://${dir}/objectinfo.html'&lt;/script&gt;"
+
+#cleanup
+sleep 3
+rm data.json
+
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>^@/</string>
+	<key>name</key>
+	<string>Get Object</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>uuid</key>
+	<string>3D60BB1D-CEA3-4FEE-8D59-FF051DEE3D7A</string>
+</dict>
+</plist>
