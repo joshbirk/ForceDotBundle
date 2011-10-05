@@ -9,10 +9,13 @@ in OS X.  Just go to "Setup -> Develop -> Tools" in your org and download the zi
 instructions.  You might need to run "ant -diagnostics" to find your ant lib directory.
 
 <h1>Installation</h1>
-<OL>
-	<LI> After cloning/forking/downloading - rename the parent directory to be "ForceDotBundle.tmBundle".
-	<LI> Double click the renamed folder.
-	
+There is a shell script "move_tools.sh" now.  Run that and it should move the Tools directory into TextMate, rename the parent directory 
+to have ".tmBundle" and if you have the mate CLI command installed, install it into TextMate.  Otherwise, double click on the now renamed 
+directory.
+
+<h1>Known Bugs</H1>
+It seems the first time you use one of the REST operations, the temporary data.json file isn't getting seen correctly.  Should run correctly 
+subsequently.  Looking into it.	
 
 <P>
 <B>Note:</B> This is unofficial, unsupported software.
