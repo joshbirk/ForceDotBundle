@@ -3,24 +3,44 @@ This project is the end result of cleaning up some shell scripts I had been tink
 for using with the Force.com Migration Tool and the OS X editor TextMate.  They could be 
 potentially be used as standalone shell scripts, but I'll gather those in a different project.
 
-<h1>Requirements</h1>
+<h2>Requirements</h2>
 You will need to download and setup the Force.com Migration Tool, which is fairly straightforward 
 in OS X.  Just go to "Setup -> Develop -> Tools" in your org and download the zip and follow the 
 instructions.  You might need to run "ant -diagnostics" to find your ant lib directory.
 
-<h1>Installation</h1>
-There is a shell script "move_tools.sh" now.  Run that and it should move the Tools directory into TextMate, rename the parent directory 
-to have ".tmBundle" and if you have the mate CLI command installed, install it into TextMate.  Otherwise, double click on the now renamed 
-directory.
+<h2>Installation from Finder</h2>
+Fork/download/clone the project.   Make sure the resulting folder is named "ForceDotBundle".  Go into that folder and 
+double click "move_tools.command" (icon looks like a document with a black box).  If you have the CLI command 
+for TextMate installed, you should just see the bundle loaded up.  Otherwise double click the now renamed parent directory.
 
-<h1>Known Bugs</H1>
+<h2>Installation from Shell</h2>
+There is a shell script "move_tools.sh" now. Make sure the resulting folder is named "ForceDotBundle".  Run that script and it should move the Tools directory into TextMate, rename the parent directory to have ".tmBundle" and if you have the mate CLI command installed, install it into TextMate.  Otherwise, double click on the now renamed directory.
+
+<h2>Manual Installation</h2>
+If the move_tools.sh file won't run for some reason, you can replicate the steps by:
+<OL>
+ <LI>Downloading or forking the project to a local folder.	
+ <LI>Go into the folder, copy the "Tools" directory.
+ <LI>Go back to the parent folder.  Rename "ForceDotBundle" (or whatever the result parent dir was) to "ForceDotBundle.tmBundle".
+ <LI>Double click the renamed directory.  TextMate should run and confirm it was installed.
+ <LI>Go to "~/Library/Application Support/TextMate/Bundles" (not this is off your user directory).
+ <LI>Right click on "ForceDotCom.tmBundle" and select "Show Package Contents".
+ <LI>Paste "Tools" into the now opened package.
+ <LI>Now to Terminal and run the following: 
+	<pre>
+	chmod -R 775 ~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools
+	</pre>	
+</OL>
+
+<h2>Known Bugs</H2>
 It seems the first time you use one of the REST operations, the temporary data.json file isn't getting seen correctly.  Should run correctly 
 subsequently.  Looking into it.	
 
 <P>
 <B>Note:</B> This is unofficial, unsupported software.
 </P>	
-	
+
+<h2>Features</h2>	
 <P>
 The bundle provides the following:
 <UL>
