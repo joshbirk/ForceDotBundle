@@ -5,6 +5,16 @@ potentially be used as standalone shell scripts, but I'll gather those in a diff
 
 I've got videos on using the bundle on YouTube: <a href="http://www.youtube.com/joshuabirk">www.youtube.com/joshuabirk</a>.
 
+<h2>Lastest Updates</h2>
+October 14, 2011:
+<UL>
+	<LI>Removed clearing out the data.json file from the HTML interfaces.  This has the effect that it might leave results in the tools directory until I 
+		can figure out a workaround, but it does seem to make the HTML interfaces more stable.
+	<LI>Added "Build Sequential" command.  See description below.
+	<LI>Added "Build Latest" command.  See description below.
+	<LI>Fixed some bugs with the Keychain handling
+</UL>
+
 <h2>Requirements</h2>
 You will need to download and setup the Force.com Migration Tool, which is fairly straightforward 
 in OS X.  Just go to "Setup -> Develop -> Tools" in your org and download the zip and follow the 
@@ -69,6 +79,16 @@ The bundle provides the following:
 		<UL>
 			<LI>Build File: this will build the current file being edited
 			<LI>Build All: this will build all the files in the project
+			<LI>Build Sequential: You can have multiple manifest files named "1.manifest", "2.manifest", "3.manifest", etc.  The command will 
+				go through them in order and build the corresponding files, allowing you to perform builds in steps.  The format for the manifest file must be:
+				<pre>
+					apex=AccountList,RESTCaseController
+					pages=AccountTest,SomePage
+					components=AComponent,BComponent
+					triggers=
+				</pre><BR/>
+				And they should be in the project folder root.
+			<LI>Build Latest: This will build all the files which have been modified in the last 24 hours.
 		</UL>
 		<LI>Run Tests
 		<UL>

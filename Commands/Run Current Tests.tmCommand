@@ -13,18 +13,24 @@ sed "s/#TESTCLASS#/${TM_FILENAME%.*}/" build.xml &gt; result.xml
 cp result.xml build.xml
 echo "&lt;div style='border:1px solid #ccc; padding: 5px; font-size: 9px'&gt;&lt;pre&gt;"
 . build.properties
+
+if[ ! -f "new.properties"]
+	then
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
+	cp build.properties build.back
 	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools//keychain.sh ${password})
 	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
-	cp new.properties build.back
 	cp new.properties build.properties
 fi
+fi
+
 ant currenttest
+
 if [ ${usekeychainaccess} == 'enabled' ]
 	then
+	cp build.properties build.back
 	sed "s/${shellpassword}/${password}/" build.properties &gt; new.properties
-	cp new.properties build.back
 	cp new.properties build.properties
 	rm new.properties
 	rm build.back

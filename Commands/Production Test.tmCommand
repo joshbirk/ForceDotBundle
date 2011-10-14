@@ -9,12 +9,16 @@
 echo "&lt;div style='border:1px solid #ccc; padding: 5px;'&gt;&lt;pre&gt;"
 cd $TM_PROJECT_DIRECTORY
 . build.properties
+
+if[ ! -f "new.properties"]
+	then
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
 	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${prodpassword})
 	sed "s/${prodpassword}/${shellpassword}/" build.properties &gt; new.properties
 	cp new.properties build.back
 	cp new.properties build.properties
+fi
 fi
 
 ant deployToProdTest

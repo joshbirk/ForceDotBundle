@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>cd $TM_PROJECT_DIRECTORY
+. build.properties
+if [ ! -f "new.properties" ] 
+	then
+if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	cp build.properties build.back
+	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
+	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
+	cp new.properties build.properties
+fi
+fi
+
+echo "&lt;h1&gt;Building Sequential&lt;/h1&gt;"
+
+
+echo "&lt;div style='background-color:#ccc'&gt;"
+echo "&lt;pre&gt;"
+
+FILES=*.manifest
+for f in $FILES 
+do
+
+. $f
+
+rm -R tmp
+mkdir tmp
+cd tmp
+mkdir classes
+mkdir components
+mkdir pages
+mkdir triggers
+cd ..
+
+IFS=',' read -ra file &lt;&lt;&lt; "$apex"
+for i in "${file[@]}"; do 
+	if [ ! -f "${i}.cls-meta.xml" ] 
+	then
+	echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ApexClass xmlns="http://soap.sforce.com/2006/04/metadata"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;status&gt;Active&lt;/status&gt;&lt;/ApexClass&gt;' &gt; "classes/${i}.cls-meta.xml"
+	fi	
+	cp classes/${i}* tmp/classes
+done
+
+IFS=',' read -ra file &lt;&lt;&lt; "$pages"
+for i in "${file[@]}"; do 
+	if [ ! -f "${i}.page-meta.xml" ] 
+	then
+
+	echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;ApexPage xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;label&gt;${i}&lt;/label&gt;&lt;/ApexPage&gt;" &gt; "pages/${i}.page-meta.xml"
+	
+	fi
+	cp pages/${i}* tmp/pages
+done
+
+IFS=',' read -ra file &lt;&lt;&lt; "$components"
+for i in "${file[@]}"; do 
+	if [ ! -f "${i}.component-meta.xml" ] 
+	then
+
+	echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;ApexComponent xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;label&gt;${i}&lt;/label&gt;&lt;/ApexComponent&gt;" &gt; "components/${i}.component-meta.xml"
+	
+	fi
+	cp components/${i}* tmp/components
+done
+
+IFS=',' read -ra file &lt;&lt;&lt; "$triggers"
+for i in "${file[@]}"; do 
+	if [ ! -f "${i}.trigger-meta.xml" ] 
+	then
+
+	echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ApexTrigger xmlns="http://soap.sforce.com/2006/04/metadata"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;status&gt;Active&lt;/status&gt;&lt;/ApexTrigger&gt;' &gt; "triggers/${i}.triggers-meta.xml"
+	
+	fi
+	cp triggers/${i}* tmp/triggers
+done
+
+cp package.xml tmp/
+ant build
+
+done
+
+if [ ${usekeychainaccess} == 'enabled' ]
+then
+cp build.properties build.back
+sed "s/${shellpassword}/${password}/" build.properties &gt; new.properties
+cp new.properties build.properties
+rm new.properties
+rm build.back
+fi
+
+echo "&lt;/pre&gt;"
+echo "&lt;/div&gt;"
+
+
+</string>
+	<key>input</key>
+	<string>none</string>
+	<key>name</key>
+	<string>Build Sequential</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>uuid</key>
+	<string>2A8ECF59-0137-4554-AA49-959CB07FA995</string>
+</dict>
+</plist>

@@ -8,6 +8,7 @@
 	<string>#get username and password from project
 cd $TM_PROJECT_DIRECTORY
 . build.properties
+
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
 	password=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
@@ -49,8 +50,8 @@ fi
 echo "&lt;script&gt;window.location = 'file://${dir}/objectinfo.html'&lt;/script&gt;"
 
 #cleanup
-sleep 3
-rm data.json
+#sleep 3
+#rm data.json
 
 </string>
 	<key>input</key>

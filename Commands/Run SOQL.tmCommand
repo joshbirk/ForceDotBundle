@@ -51,8 +51,8 @@ fi
 echo "&lt;script&gt;window.location = 'file://${dir}/soql.html'&lt;/script&gt;"
 
 #cleanup
-sleep 3
-rm data.json
+#sleep 3
+#rm data.json
 
 </string>
 	<key>fallbackInput</key>

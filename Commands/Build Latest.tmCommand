@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>rm -R tmp
+mkdir tmp
+cd tmp
+mkdir classes
+mkdir components
+mkdir pages
+mkdir triggers
+cd ..
+
+echo "&lt;h1&gt;Building Latest&lt;/h1&gt;"
+
+cd classes
+fileArray=($(find . -name "*.cls" -mtime -1))
+for file in $fileArray 
+do
+	filename=${file%.*}
+	i=${filename:2}
+	echo $i
+	if [ ! -f "${i}.cls-meta.xml" ] 
+	then
+	echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ApexClass xmlns="http://soap.sforce.com/2006/04/metadata"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;status&gt;Active&lt;/status&gt;&lt;/ApexClass&gt;' &gt; "classes/${i}.cls-meta.xml"
+	fi	
+	cp ${i}* ../tmp/classes
+done
+
+cd ../pages
+fileArray=($(find . -name "*.page" -mtime -1))
+for file in $fileArray 
+do
+	filename=${file%.*}
+	i=${filename:2}
+	echo $i
+	if [ ! -f "${i}.page-meta.xml" ] 
+	then
+	echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;ApexPage xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;label&gt;${i}&lt;/label&gt;&lt;/ApexPage&gt;" &gt; "pages/${i}.page-meta.xml"
+	fi	
+	cp ${i}* ../tmp/pages
+done
+
+cd ../components
+fileArray=($(find . -name "*.component" -mtime -1))
+for file in $fileArray 
+do
+	filename=${file%.*}
+	i=${filename:2}
+	echo $i
+	if [ ! -f "${i}.component-meta.xml" ] 
+	then
+	echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;ApexComponent xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;label&gt;${i}&lt;/label&gt;&lt;/ApexComponent&gt;" &gt; "components/${i}.component-meta.xml"
+	fi	
+	cp ${i}* ../tmp/components
+done
+
+cd ../triggers
+fileArray=($(find . -name "*.trigger" -mtime -1))
+for file in $fileArray 
+do
+	filename=${file%.*}
+	i=${filename:2}
+	echo $i
+	if [ ! -f "${i}.cls-meta.xml" ] 
+	then
+	echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ApexTrigger xmlns="http://soap.sforce.com/2006/04/metadata"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;status&gt;Active&lt;/status&gt;&lt;/ApexTrigger&gt;' &gt; "triggers/${i}.triggers-meta.xml"
+	fi	
+	cp ${i}* ../tmp/triggers
+done
+
+echo "&lt;div style='background-color:#ccc'&gt;"
+echo "&lt;pre&gt;"
+cd ..
+cp package.xml tmp/
+ant build
+echo "&lt;/pre&gt;"
+echo "&lt;/div&gt;"
+
+
+
+
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>name</key>
+	<string>Build Latest</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>uuid</key>
+	<string>149AD567-5269-4FD9-A2BD-E820A844D968</string>
+</dict>
+</plist>

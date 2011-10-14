@@ -21,20 +21,19 @@ then echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ApexClass xmlns="http
 fi
 
 if [ ${TM_FILENAME##*.} == 'page' ]
-then echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;ApexPage xmlns="http://soap.sforce.com/2006/04/metadata"&gt;
+then echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+&lt;ApexPage xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;
 &lt;apiVersion&gt;22.0&lt;/apiVersion&gt;
 &lt;label&gt;${TM_FILENAME%.*}&lt;/label&gt;
-&lt;/ApexPage&gt;' &gt; "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml"
+&lt;/ApexPage&gt;" &gt; "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml"
 fi
 
 if [ ${TM_FILENAME##*.} == 'component' ]
-then echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata"&gt;
+then echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+&lt;ApexComponent xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;
 &lt;apiVersion&gt;22.0&lt;/apiVersion&gt;
-&lt;description&gt;Default Force.com site footer component&lt;/description&gt;
 &lt;label&gt;${TM_FILENAME%.*}&lt;/label&gt;
-&lt;/ApexComponent&gt;' &gt; "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml"
+&lt;/ApexComponent&gt;" &gt; "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml"
 fi
 
 if [ ${TM_FILENAME##*.} == 'trigger' ]
@@ -50,17 +49,20 @@ fi
 cd $TM_PROJECT_DIRECTORY
 
 . build.properties
+if [ ! -f "new.properties" ] 
+	then
 if [ ${usekeychainaccess} == 'enabled' ]
-then 
-shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
-sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
-cp new.properties build.back
-cp new.properties build.properties
+	then 
+	cp build.properties build.back
+	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
+	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
+	cp new.properties build.properties
+fi
 fi
 
 #echo ${TM_FILENAME%.*}
 
-#echo "&lt;hr&gt;&lt;h4&gt;Cleanup&lt;/h4&gt;"
+echo "&lt;hr&gt;&lt;h4&gt;Cleanup&lt;/h4&gt;"
 rm -R tmp
 mkdir tmp
 cd tmp
@@ -97,18 +99,21 @@ cp triggers/${TM_FILENAME%.*}.trigger-meta.xml tmp/triggers/
 fi
 
 cp package.xml tmp/
-#echo "&lt;h1&gt;Building&lt;/h1&gt;"
+echo "&lt;h1&gt;Building&lt;/h1&gt;"
 echo "&lt;div style='background-color:#ccc'&gt;"
 echo "&lt;pre&gt;"
 ant build
 echo "&lt;/pre&gt;&lt;/div&gt;"
 echo "&lt;hr&gt;Done"
 
+
+date '+%m-%d-%y %H:%M:%S' &gt; .lastbuild
+
 #cleanup
 if [ ${usekeychainaccess} == 'enabled' ]
 then
+cp build.properties build.back
 sed "s/${shellpassword}/${password}/" build.properties &gt; new.properties
-cp new.properties build.back
 cp new.properties build.properties
 rm new.properties
 rm build.back

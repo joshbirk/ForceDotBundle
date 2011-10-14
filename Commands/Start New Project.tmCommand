@@ -44,10 +44,6 @@ echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
         &lt;members&gt;*&lt;/members&gt;
         &lt;name&gt;ApexTrigger&lt;/name&gt;
     &lt;/types&gt;
-    &lt;types&gt;
-        &lt;members&gt;*&lt;/members&gt;
-        &lt;name&gt;StaticResource&lt;/name&gt;
-    &lt;/types&gt;
     &lt;version&gt;22.0&lt;/version&gt;
 &lt;/Package&gt;' &gt; 'package.xml'
 
@@ -75,6 +71,12 @@ echo '&lt;project default="build-all" basedir="." xmlns:sf="antlib:com.salesforc
 
 	&lt;target name="test"&gt;
       &lt;sf:deploy username="${username}" password="${password}" serverurl="${serverurl}" deployRoot="./" runAllTests="true" checkOnly="true"/&gt;
+    &lt;/target&gt;
+
+	&lt;target name="currenttest"&gt;
+      &lt;sf:deploy username="${username}" password="${password}" serverurl="${serverurl}" deployRoot="./" runAllTests="false" checkOnly="true"&gt;
+	&lt;runTest&gt;#TESTCLASS#&lt;/runTest&gt;
+	&lt;/sf:deploy&gt;
     &lt;/target&gt;
 
      &lt;target name="getLatest"&gt;

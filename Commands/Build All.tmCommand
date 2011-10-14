@@ -9,20 +9,23 @@
 cd $TM_PROJECT_DIRECTORY
 echo "&lt;div style='background-color:#ccc'&gt;&lt;pre&gt;;"
 . build.properties
-if [ ${usekeychainaccess} == 'enabled' ]
+if[ ! -f "new.properties"]
+	then
+if[ ${usekeychainaccess} == 'enabled' ]
 	then 
+	cp build.properties build.back
 	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
 	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
-	cp new.properties build.back
 	cp new.properties build.properties
+fi
 fi
 
 ant build-all
 
 if [ ${usekeychainaccess} == 'enabled' ]
 	then
+	cp build.properties build.back
 	sed "s/${shellpassword}/${password}/" build.properties &gt; new.properties
-	cp new.properties build.back
 	cp new.properties build.properties
 	rm new.properties
 	rm build.back
