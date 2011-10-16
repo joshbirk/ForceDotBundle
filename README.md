@@ -13,7 +13,7 @@ I've got videos on using the bundle on YouTube: <a href="http://www.youtube.com/
 	<LI> Data.json being cleared out again
 </UL>
 
-<bOctober 14, 2011</b>:<BR />
+<b>October 14, 2011</b>:<BR />
 <UL>
 	<LI>Removed clearing out the data.json file from the HTML interfaces.  This has the effect that it might leave results in the tools directory until I 
 		can figure out a workaround, but it does seem to make the HTML interfaces more stable.
