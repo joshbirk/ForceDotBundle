@@ -44,9 +44,15 @@ If the move_tools.sh file won't run for some reason, you can replicate the steps
 	</pre>	
 </OL>
 
+<H2>Enabling OAuth login for REST</H2>
+Not sure if this should be the only source of login or not - but if you want to try using the OAuth endpoints to login instead of SOAP, add "consumerkey" and "privatekey" to build.properties with your Consumer Public and Consumer Secret from a Remote Settings entry.
+
 <h2>Known Bugs</H2>
-It seems the first time you use one of the REST operations, the temporary data.json file isn't getting seen correctly.  Should run correctly 
-subsequently.  Looking into it.	
+The REST/HTML widgets should not be freezing up now.  Please DM me if they are still.
+
+<UL>
+	<LI>consumerkey/private vars have no keychain hook.  Easy to add if there is enough demand.
+</UL>
 
 <P>
 <B>Note:</B> This is unofficial, unsupported software.
