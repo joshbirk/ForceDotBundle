@@ -10,8 +10,7 @@ echo "&lt;div style='border:1px solid #ccc; padding: 5px;'&gt;&lt;pre&gt;"
 
 cd $TM_PROJECT_DIRECTORY
 . build.properties
-
-if[ ! -f "new.properties"]
+if [ ! -f "new.properties" ] 
 	then
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
