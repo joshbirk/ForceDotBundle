@@ -102,6 +102,8 @@ echo "&lt;/div&gt;"
 </string>
 	<key>input</key>
 	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>^~b</string>
 	<key>name</key>
 	<string>Build Sequential</string>
 	<key>output</key>

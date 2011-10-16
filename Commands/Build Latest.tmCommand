@@ -5,7 +5,20 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>rm -R tmp
+	<string>cd $TM_PROJECT_DIRECTORY
+. build.properties
+if [ ! -f "new.properties" ] 
+	then
+if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	cp build.properties build.back
+	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
+	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
+	cp new.properties build.properties
+fi
+fi
+
+rm -R tmp
 mkdir tmp
 cd tmp
 mkdir classes
@@ -15,10 +28,11 @@ mkdir triggers
 cd ..
 
 echo "&lt;h1&gt;Building Latest&lt;/h1&gt;"
-
+echo "&lt;pre&gt;"
+cd $TM_PROJECT_DIRECTORY
 cd classes
-fileArray=($(find . -name "*.cls" -mtime -1))
-for file in $fileArray 
+
+for file in $(find . -name "*.cls" -mtime -1)
 do
 	filename=${file%.*}
 	i=${filename:2}
@@ -31,8 +45,7 @@ do
 done
 
 cd ../pages
-fileArray=($(find . -name "*.page" -mtime -1))
-for file in $fileArray 
+for file in $(find . -name "*.page" -mtime -1)
 do
 	filename=${file%.*}
 	i=${filename:2}
@@ -45,8 +58,7 @@ do
 done
 
 cd ../components
-fileArray=($(find . -name "*.component" -mtime -1))
-for file in $fileArray 
+for file in $(find . -name "*.component" -mtime -1)
 do
 	filename=${file%.*}
 	i=${filename:2}
@@ -59,8 +71,7 @@ do
 done
 
 cd ../triggers
-fileArray=($(find . -name "*.trigger" -mtime -1))
-for file in $fileArray 
+for file in $(find . -name "*.trigger" -mtime -1)
 do
 	filename=${file%.*}
 	i=${filename:2}
@@ -72,7 +83,7 @@ do
 	cp ${i}* ../tmp/triggers
 done
 
-echo "&lt;div style='background-color:#ccc'&gt;"
+echo "&lt;/pre&gt;&lt;div style='background-color:#ccc'&gt;"
 echo "&lt;pre&gt;"
 cd ..
 cp package.xml tmp/
@@ -80,16 +91,26 @@ ant build
 echo "&lt;/pre&gt;"
 echo "&lt;/div&gt;"
 
+if [ ${usekeychainaccess} == 'enabled' ]
+then
+cp build.properties build.back
+sed "s/${shellpassword}/${password}/" build.properties &gt; new.properties
+cp new.properties build.properties
+rm new.properties
+rm build.back
+fi
 
 
 
 </string>
 	<key>input</key>
 	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>~@b</string>
 	<key>name</key>
 	<string>Build Latest</string>
 	<key>output</key>
-	<string>replaceSelectedText</string>
+	<string>showAsHTML</string>
 	<key>uuid</key>
 	<string>149AD567-5269-4FD9-A2BD-E820A844D968</string>
 </dict>
