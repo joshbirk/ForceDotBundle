@@ -29,8 +29,7 @@ in OS X.  Just go to "Setup -> Develop -> Tools" in your org and download the zi
 instructions.  You might need to run "ant -diagnostics" to find your ant lib directory.
 
 <h2>Installation from Finder</h2>
-Fork/download/clone the project.   Make sure the resulting folder is named "ForceDotBundle".  Go into that folder and 
-double click "move_tools.command" (icon looks like a document with a black box).  If you have the CLI command 
+Fork/download/clone the project. There is also a ZIP file in the downloads section.  Make sure the resulting folder is named "ForceDotBundle" and rename it if needed.  Go into that folder and double click "move_tools.command" (icon looks like a document with a black box).  If you have the CLI command 
 for TextMate installed, you should just see the bundle loaded up.  Otherwise double click the now renamed parent directory.
 
 <h2>Installation from Shell</h2>
