@@ -26,6 +26,11 @@ echo "&lt;h3&gt;Temp directory built&lt;/h3&gt;"
 
 cd ..
 
+echo 'apex=
+pages=
+components=
+triggers=' &gt; 1.manifest
+
 echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;Package xmlns="http://soap.sforce.com/2006/04/metadata"&gt;
     &lt;types&gt;
