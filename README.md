@@ -6,7 +6,13 @@ potentially be used as standalone shell scripts, but I'll gather those in a diff
 I've got videos on using the bundle on YouTube: <a href="http://www.youtube.com/joshuabirk">www.youtube.com/joshuabirk</a>.
 
 <h2>Lastest Updates</h2>
-October 14, 2011:
+<b>October 15, 2011</b>:<BR />
+<UL>
+	<LI> Added "Build Sequential" and "Build Latest" commands.
+	<LI> Updated REST/HTML widgets.  More stability, support for OAuth login.
+</UL>
+
+<bOctober 14, 2011</b>:<BR />
 <UL>
 	<LI>Removed clearing out the data.json file from the HTML interfaces.  This has the effect that it might leave results in the tools directory until I 
 		can figure out a workaround, but it does seem to make the HTML interfaces more stable.
