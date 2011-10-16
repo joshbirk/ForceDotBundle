@@ -10,6 +10,7 @@ I've got videos on using the bundle on YouTube: <a href="http://www.youtube.com/
 <UL>
 	<LI> Added "Build Sequential" and "Build Latest" commands.
 	<LI> Updated REST/HTML widgets.  More stability, support for OAuth login.
+	<LI> Data.json being cleared out again
 </UL>
 
 <bOctober 14, 2011</b>:<BR />
