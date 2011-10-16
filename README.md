@@ -3,7 +3,7 @@ This project is the end result of cleaning up some shell scripts I had been tink
 for using with the Force.com Migration Tool and the OS X editor TextMate.  They could be 
 potentially be used as standalone shell scripts, but I'll gather those in a different project.
 
-I've got videos on using the bundle on YouTube: <a href="http://www.youtube.com/joshuabirk">www.youtube.com/joshuabirk</a>.
+I've got videos on using the bundle on YouTube: http://www.youtube.com/joshuabirk
 
 <h2>Lastest Updates</h2>
 <b>October 15, 2011</b>:<BR />
