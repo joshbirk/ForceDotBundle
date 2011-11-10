@@ -65,7 +65,7 @@ echo "&lt;script&gt;window.location = 'file://${dir}/objectinfo.html'&lt;/script
 
 #cleanup
 sleep 1
-#rm data.json
+rm data.json
 
 </string>
 	<key>input</key>

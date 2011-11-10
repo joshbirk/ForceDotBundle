@@ -6,6 +6,11 @@ potentially be used as standalone shell scripts, but I'll gather those in a diff
 I've got videos on using the bundle on YouTube: http://www.youtube.com/joshuabirk
 
 <h2>Lastest Updates</h2>
+<b>November 10th, 2011</B>:<BR />
+<UL>
+	<LI> Updated Project Name handling to support spaces in the commands
+	<LI> Changed bundle name in info.plist to "ForceDotBundle" for clarity	
+</UL>	
 <b>October 15, 2011</b>:<BR />
 <UL>
 	<LI> Added "Build Sequential" and "Build Latest" commands.
