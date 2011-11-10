@@ -5,7 +5,8 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>for file in $(find . -name "*.cls*")
+	<string>cd "${TM_PROJECT_DIRECTORY}"
+for file in $(find . -name "*.cls*")
 do
 	if [[ $file != *$TM_SELECTED_TEXT* ]]
 	then

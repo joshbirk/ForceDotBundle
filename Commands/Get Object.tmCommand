@@ -6,7 +6,7 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#get username and password from project
-cd $TM_PROJECT_DIRECTORY
+cd "${TM_PROJECT_DIRECTORY}"
 . build.properties
 
 if [ ${usekeychainaccess} == 'enabled' ]
@@ -42,6 +42,7 @@ fi
 #make REST callout
 echo "data = " &gt; data.json
 data=$(curl -s https://${pod}.salesforce.com/services/data/v20.0/sobjects/${TM_SELECTED_TEXT}/describe -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
+echo $data
 echo $data &gt;&gt; data.json
 
 #check to see if session expired
@@ -64,7 +65,7 @@ echo "&lt;script&gt;window.location = 'file://${dir}/objectinfo.html'&lt;/script
 
 #cleanup
 sleep 1
-rm data.json
+#rm data.json
 
 </string>
 	<key>input</key>

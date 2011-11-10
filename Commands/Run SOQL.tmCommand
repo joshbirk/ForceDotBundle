@@ -6,7 +6,7 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#get username and password from project
-cd $TM_PROJECT_DIRECTORY
+cd "${TM_PROJECT_DIRECTORY}"
 . build.properties
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
@@ -42,6 +42,7 @@ query=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${TM_SELECTED_TEXT}
 echo $query &gt; query
 echo "data = " &gt; data.json
 data=$(curl -s https://${pod}.salesforce.com/services/data/v22.0/query/?q=${query} -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
+echo $data
 echo $data &gt;&gt; data.json
 
 #check to see if session expired

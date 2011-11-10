@@ -46,7 +46,7 @@ fi
 
 fi
 
-cd $TM_PROJECT_DIRECTORY
+cd "${TM_PROJECT_DIRECTORY}"
 
 . build.properties
 if [ ! -f "new.properties" ] 

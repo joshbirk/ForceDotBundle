@@ -8,7 +8,7 @@
 	<string>echo "&lt;h1&gt;Getting Latest From Server&lt;/h1&gt;"
 echo "&lt;div style='border:1px solid #ccc; padding: 5px;'&gt;&lt;pre&gt;"
 
-cd $TM_PROJECT_DIRECTORY
+cd "${TM_PROJECT_DIRECTORY}"
 . build.properties
 if [ ! -f "new.properties" ] 
 	then
