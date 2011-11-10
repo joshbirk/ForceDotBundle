@@ -143,7 +143,7 @@ The bundle provides the following:
 			<LI>Add Password: Highlighted text in the format "password:accountname" will add a new password to Keychain under accountname and replace the text with accountname.
 			<LI>Lock Keychain: Locks keychain and requires a password for later use.
 		</UL>
-		<LI>Delete Except: This command will delete all the classes, pages, components and triggers from the project unless they include the highlighted text in their filenames.  This is case sensitive, and obviously suggested to save and build before latest ... there is no undo.  Only for the brave but handy for people with large orgs looking only for projects which started with "something".
+		<LI>Delete Except: This command will delete all the classes, pages, components and triggers from the local project folder unless they include the highlighted text in their filenames.  This is case sensitive, and obviously suggested to save and build before latest ... there is no undo.  Only for the brave but handy for people with large orgs looking only for projects which started with "something".
 	</OL>
 </UL>
 </P>
