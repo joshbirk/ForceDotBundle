@@ -6,7 +6,7 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#get username and password from project
-cd "${TM_PROJECT_DIRECTORY}"
+cd "$TM_PROJECT_DIRECTORY"
 . build.properties
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 

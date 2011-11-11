@@ -6,7 +6,7 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>echo "&lt;h1&gt;Building Project&lt;/h1&gt;"
-cd "${TM_PROJECT_DIRECTORY}"
+cd "$TM_PROJECT_DIRECTORY"
 echo "&lt;div style='background-color:#ccc'&gt;&lt;pre&gt;;"
 . build.properties
 if[ ! -f "new.properties"]

@@ -7,10 +7,10 @@
 	<key>command</key>
 	<string>echo "&lt;h1&gt;Running All Tests&lt;/h1&gt;"
 echo "&lt;div style='border:1px solid #ccc; padding: 5px; font-size: 9px'&gt;&lt;pre&gt;"
-cd "${TM_PROJECT_DIRECTORY}"
+cd "$TM_PROJECT_DIRECTORY"
 . build.properties
 
-if[ ! -f "new.properties"]
+if [ ! -f "new.properties" ] 
 	then
 if [ ${usekeychainaccess} == 'enabled' ]
 then 
