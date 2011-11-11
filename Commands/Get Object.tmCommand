@@ -11,7 +11,7 @@ cd "${TM_PROJECT_DIRECTORY}"
 
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
-	password=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
+	password=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools/keychain.sh ${password})
 fi
 
 

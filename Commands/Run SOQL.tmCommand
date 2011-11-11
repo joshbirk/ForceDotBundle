@@ -10,7 +10,7 @@ cd "${TM_PROJECT_DIRECTORY}"
 . build.properties
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
-	password=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools/keychain.sh ${password})
+	password=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools/keychain.sh ${password})
 fi
 
 #go to the HTML widgets folder
