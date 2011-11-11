@@ -47,7 +47,7 @@ If the move_tools.sh file won't run for some reason, you can replicate the steps
  <LI>Go into the folder, copy the "Tools" directory.
  <LI>Go back to the parent folder.  Rename "ForceDotBundle" (or whatever the result parent dir was) to "ForceDotBundle.tmBundle".
  <LI>Double click the renamed directory.  TextMate should run and confirm it was installed.
- <LI>Go to "~/Library/Application Support/TextMate/Bundles" (not this is off your user directory).
+ <LI>Go to "~/Library/Application Support/TextMate/Bundles" (note this is off your user directory).
  <LI>Right click on "ForceDotCom.tmBundle" and select "Show Package Contents".
  <LI>Paste "Tools" into the now opened package.
  <LI>Now to Terminal and run the following: 
