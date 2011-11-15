@@ -16,7 +16,7 @@ fi
 
 
 #go to the HTML widgets folder
-cd ~/Library/Application\ Support/TextMate/Bundles/ForceDotCom.tmbundle/Tools
+cd ~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools
 dir=$(pwd)
 
 #determine session
