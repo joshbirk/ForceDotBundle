@@ -5,7 +5,8 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>echo "&lt;h1&gt;Creating new project&lt;/h1&gt;"
+	<string>echo "&lt;style&gt;body { margin: 0px; padding: 0px; background-color:#efefef }&lt;/style&gt;"
+echo "&lt;div style='width:100%;background-image: -webkit-linear-gradient(left , rgb(76,142,255) 12%, rgb(105,199,250) 56%, rgb(255,255,255) 78%);'&gt;&lt;h2&gt;Start New Project&lt;/h2&gt;&lt;/div&gt;"
 cd "$TM_PROJECT_DIRECTORY"
 
 mkdir classes
@@ -14,7 +15,7 @@ mkdir pages
 mkdir triggers
 mkdir tmp
 
-echo "&lt;h3&gt;Directories built&lt;/h3&gt;"
+echo "&lt;h4&gt;Directories built&lt;/h4&gt;"
 
 cd tmp
 mkdir classes
@@ -22,7 +23,7 @@ mkdir components
 mkdir pages
 mkdir triggers
 
-echo "&lt;h3&gt;Temp directory built&lt;/h3&gt;"
+echo "&lt;h4&gt;Temp directory built&lt;/h4&gt;"
 
 cd ..
 
@@ -105,9 +106,9 @@ echo '&lt;project default="build-all" basedir="." xmlns:sf="antlib:com.salesforc
 	
 &lt;/project&gt;' &gt; 'build.xml'
 
-echo "&lt;h3&gt;Build files set&lt;/h3&gt;"
+echo "&lt;h4&gt;Build files set&lt;/h4&gt;"
 echo "&lt;h3&gt;Done.  May take awhile for TextMate to refresh parent directory.  You can refresh by viewing the folder in Finder.&lt;/h3&gt;"
-
+echo "&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;"
 </string>
 	<key>input</key>
 	<string>none</string>

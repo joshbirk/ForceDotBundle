@@ -3,15 +3,18 @@
 <plist version="1.0">
 <dict>
 	<key>beforeRunningCommand</key>
-	<string>nop</string>
+	<string>saveModifiedFiles</string>
 	<key>command</key>
 	<string>cd "$TM_PROJECT_DIRECTORY"
 . build.properties
+echo "&lt;style&gt;body { margin: 0px; padding: 0px; background-color:#efefef }&lt;/style&gt;"
+echo "&lt;div style='width:100%;background-image: -webkit-linear-gradient(left , rgb(76,142,255) 12%, rgb(105,199,250) 56%, rgb(255,255,255) 78%);'&gt;&lt;h2&gt;Building Latest&lt;/h2&gt;&lt;/div&gt;"
+
 if [ ! -f "new.properties" ] 
 	then
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
-	cp build.properties build.back
+	cp build.properties build.bak
 	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools/keychain.sh ${password})
 	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
 	cp new.properties build.properties
@@ -27,8 +30,8 @@ mkdir pages
 mkdir triggers
 cd ..
 
-echo "&lt;h1&gt;Building Latest&lt;/h1&gt;"
-echo "&lt;pre&gt;"
+echo "&lt;div style='margin: 2px; border: 1px solid #999; padding: 2px; background-color: white'&gt;Found:&amp;nbsp;"
+
 cd "${TM_PROJECT_DIRECTORY}"
 cd classes
 
@@ -36,7 +39,7 @@ for file in $(find . -name "*.cls" -mtime -1)
 do
 	filename=${file%.*}
 	i=${filename:2}
-	echo $i
+	echo "${i}&amp;nbsp"
 	if [ ! -f "${i}.cls-meta.xml" ] 
 	then
 	echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ApexClass xmlns="http://soap.sforce.com/2006/04/metadata"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;status&gt;Active&lt;/status&gt;&lt;/ApexClass&gt;' &gt; "classes/${i}.cls-meta.xml"
@@ -49,7 +52,7 @@ for file in $(find . -name "*.page" -mtime -1)
 do
 	filename=${file%.*}
 	i=${filename:2}
-	echo $i
+	echo "${i}&amp;nbsp"
 	if [ ! -f "${i}.page-meta.xml" ] 
 	then
 	echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;ApexPage xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;label&gt;${i}&lt;/label&gt;&lt;/ApexPage&gt;" &gt; "pages/${i}.page-meta.xml"
@@ -62,7 +65,7 @@ for file in $(find . -name "*.component" -mtime -1)
 do
 	filename=${file%.*}
 	i=${filename:2}
-	echo $i
+	echo "${i}&amp;nbsp"
 	if [ ! -f "${i}.component-meta.xml" ] 
 	then
 	echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;ApexComponent xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;label&gt;${i}&lt;/label&gt;&lt;/ApexComponent&gt;" &gt; "components/${i}.component-meta.xml"
@@ -75,7 +78,7 @@ for file in $(find . -name "*.trigger" -mtime -1)
 do
 	filename=${file%.*}
 	i=${filename:2}
-	echo $i
+	echo "${i}&amp;nbsp"
 	if [ ! -f "${i}.cls-meta.xml" ] 
 	then
 	echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ApexTrigger xmlns="http://soap.sforce.com/2006/04/metadata"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;status&gt;Active&lt;/status&gt;&lt;/ApexTrigger&gt;' &gt; "triggers/${i}.triggers-meta.xml"
@@ -83,21 +86,38 @@ do
 	cp ${i}* ../tmp/triggers
 done
 
-echo "&lt;/pre&gt;&lt;div style='background-color:#ccc'&gt;"
-echo "&lt;pre&gt;"
+echo "&lt;/div&gt;"
+
+echo "&lt;div style='background-color: white; border:1px solid #999; font-family: Tahoma MS, Lucida, Verdana; padding: 5px; color: #666; margin: 2px;'&gt;"
+echo "&lt;pre id='output_pre'&gt;"
 cd ..
 cp package.xml tmp/
 ant build
 echo "&lt;/pre&gt;"
-echo "&lt;/div&gt;"
+echo "&lt;div id='output' style='color:black'&gt;&lt;/div&gt;&lt;/div&gt;"
+
+echo "&lt;script&gt;"
+echo "output = document.getElementById('output');
+output.innerHTML = document.getElementById('output_pre').innerHTML;
+document.getElementById('output_pre').style.display='none';
+output.innerHTML = output.innerHTML.replace(/\n/gi,'&lt;br /&gt;');
+output.innerHTML = output.innerHTML.replace(/BUILD SUCCESSFUL/gi,'&lt;span style=font-weight:bold;color:#526F35&gt;BUILD SUCCESSFUL&lt;/span&gt;');
+output.innerHTML = output.innerHTML.replace(/BUILD FAILED/gi,'&amp;nbsp;&lt;span style=font-weight:bold;color:#CD2626&gt;BUILD FAILED&lt;/span&gt;');
+output.innerHTML = output.innerHTML.replace(/ERROR:/gi,'&lt;HR /&gt;ERROR:');
+
+output.innerHTML = output.innerHTML.replace(/\(/gi,'&lt;BR /&gt;&lt;span style=background-color:black;color:white&gt;&amp;nbsp;(');
+output.innerHTML = output.innerHTML.replace(/\)\:/gi,')&amp;nbsp;&lt;/span&gt; Error Message: &amp;nbsp;&lt;BR /&gt;');
+&lt;/script&gt;"
+
+echo "&lt;hr&gt;&lt;button onclick='self.close();' style='border: 1px solid black; background-color:#ccc'&gt;Done&lt;/button&gt;"
 
 if [ ${usekeychainaccess} == 'enabled' ]
-then
-cp build.properties build.back
-sed "s/${shellpassword}/${password}/" build.properties &gt; new.properties
-cp new.properties build.properties
-rm new.properties
-rm build.back
+	then 
+	cp build.bak build.properties
+if [ -f "new.properties" ]  
+	then
+	rm new.properties
+fi
 fi
 
 

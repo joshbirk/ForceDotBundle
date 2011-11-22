@@ -5,7 +5,11 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#get username and password from project
+	<string>echo "&lt;style&gt;body { margin: 0px; padding: 0px; background-color:#efefef }&lt;/style&gt;"
+echo "&lt;div style='width:100%;background-image: -webkit-linear-gradient(left , rgb(76,142,255) 12%, rgb(105,199,250) 56%, rgb(255,255,255) 78%);'&gt;&lt;h2&gt;Describing ${TM_SELECTED_TEXT}&lt;/h2&gt;&lt;/div&gt;"
+echo "&lt;div style='background-color: white; border:1px solid #999; font-family: Tahoma MS, Lucida, Verdana; padding: 5px; color: #666; margin: 2px;'&gt;"
+echo "&lt;pre id='output_pre'&gt;"
+
 cd "$TM_PROJECT_DIRECTORY"
 . build.properties
 
@@ -14,8 +18,6 @@ if [ ${usekeychainaccess} == 'enabled' ]
 	password=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools/keychain.sh ${password})
 fi
 
-
-#go to the HTML widgets folder
 cd ~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools
 dir=$(pwd)
 
@@ -61,7 +63,7 @@ fi
 sleep 1
 
 #move to HTML widget
-echo "&lt;script&gt;window.location = 'file://${dir}/objectinfo.html'&lt;/script&gt;"
+echo "&lt;/pre&gt;&lt;/div&gt;&lt;script&gt;window.location = 'file://${dir}/objectinfo.html'&lt;/script&gt;"
 
 #cleanup
 sleep 1

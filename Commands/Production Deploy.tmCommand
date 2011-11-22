@@ -3,20 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>beforeRunningCommand</key>
-	<string>nop</string>
+	<string>saveModifiedFiles</string>
 	<key>command</key>
-	<string>echo "&lt;h1&gt;Getting Latest From Server&lt;/h1&gt;"
-echo "&lt;div style='border:1px solid #ccc; padding: 5px;'&gt;&lt;pre&gt;"
+	<string>echo "&lt;style&gt;body { margin: 0px; padding: 0px; background-color:#efefef }&lt;/style&gt;"
+echo "&lt;div style='width:100%;background-image: -webkit-linear-gradient(left , rgb(76,142,255) 12%, rgb(105,199,250) 56%, rgb(255,255,255) 78%);'&gt;&lt;h2&gt;Production Deploy&lt;/h2&gt;&lt;/div&gt;"
+
+echo "&lt;div style='background-color: white; border:1px solid #999; font-family: Tahoma MS, Lucida, Verdana; padding: 5px; color: #666; margin: 2px;'&gt;"
+echo "&lt;pre id='output_pre'&gt;"
 cd "$TM_PROJECT_DIRECTORY"
 
 . build.properties
-if[ ! -f "new.properties"]
+if [ ! -f "new.properties" ] 
 	then
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
+	cp build.properties build.bak
 	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools/keychain.sh ${prodpassword})
 	sed "s/${prodpassword}/${shellpassword}/" build.properties &gt; new.properties
-	cp new.properties build.back
 	cp new.properties build.properties
 fi
 fi
@@ -24,16 +27,31 @@ fi
 ant deployToProdTest
 
 if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	cp build.bak build.properties
+if [ -f "new.properties" ]  
 	then
-	sed "s/${shellpassword}/${prodpassword}/" build.properties &gt; new.properties
-	cp new.properties build.back
-	cp new.properties build.properties
 	rm new.properties
-	rm build.back
+fi
 fi
 
-echo "&lt;/pre&gt;&lt;/div&gt;"
-echo "&lt;hr&gt;Done."</string>
+echo "&lt;/pre&gt;"
+echo "&lt;div id='output' style='color:black'&gt;&lt;/div&gt;&lt;/div&gt;"
+
+echo "&lt;script&gt;"
+echo "output = document.getElementById('output');
+output.innerHTML = document.getElementById('output_pre').innerHTML;
+document.getElementById('output_pre').style.display='none';
+output.innerHTML = output.innerHTML.replace(/\n/gi,'&lt;br /&gt;');
+output.innerHTML = output.innerHTML.replace(/BUILD SUCCESSFUL/gi,'&lt;span style=font-weight:bold;color:#526F35&gt;BUILD SUCCESSFUL&lt;/span&gt;');
+output.innerHTML = output.innerHTML.replace(/BUILD FAILED/gi,'&amp;nbsp;&lt;span style=font-weight:bold;color:#CD2626&gt;BUILD FAILED&lt;/span&gt;');
+output.innerHTML = output.innerHTML.replace(/ERROR:/gi,'&lt;HR /&gt;ERROR:');
+
+output.innerHTML = output.innerHTML.replace(/\(/gi,'&lt;BR /&gt;&lt;span style=background-color:black;color:white&gt;&amp;nbsp;(');
+output.innerHTML = output.innerHTML.replace(/\)\:/gi,')&amp;nbsp;&lt;/span&gt; Error Message: &amp;nbsp;&lt;BR /&gt;');
+&lt;/script&gt;"
+
+echo "&lt;hr&gt;&lt;button onclick='self.close();' style='border: 1px solid black; background-color:#ccc'&gt;Done&lt;/button&gt;"</string>
 	<key>input</key>
 	<string>none</string>
 	<key>name</key>

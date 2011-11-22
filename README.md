@@ -1,37 +1,19 @@
 <h1>ForceDotBundle</h1>
 This project is the end result of cleaning up some shell scripts I had been tinkering with
-for using with the Force.com Migration Tool and the OS X editor TextMate.  They could be 
-potentially be used as standalone shell scripts, but I'll gather those in a different project.
+for using with the Force.com Migration Tool and the OS X editor TextMate.  It has templates for Apex and Visualforce and 
+offers a few options for building and testing code, easy HTML links into things like the Apex System Log (to execute anonymous code), along with access to a couple of REST API features to run SOQL and get object definitions.
 
 I've got videos on using the bundle on YouTube: http://www.youtube.com/joshuabirk
 
-<h2>Lastest Updates</h2>
-<b>November 10th, 2011</B>:<BR />
-<UL>
-	<LI> Updated Project Name handling to support spaces in the commands
-	<LI> Changed bundle name in info.plist to "ForceDotBundle" for clarity	
-</UL>	
-<b>October 15, 2011</b>:<BR />
-<UL>
-	<LI> Added "Build Sequential" and "Build Latest" commands.
-	<LI> Updated REST/HTML widgets.  More stability, support for OAuth login.
-	<LI> Data.json being cleared out again
-	<LI> Adding "Delete Except" command.  See description below.
-</UL>
-
-<b>October 14, 2011</b>:<BR />
-<UL>
-	<LI>Removed clearing out the data.json file from the HTML interfaces.  This has the effect that it might leave results in the tools directory until I 
-		can figure out a workaround, but it does seem to make the HTML interfaces more stable.
-	<LI>Added "Build Sequential" command.  See description below.
-	<LI>Added "Build Latest" command.  See description below.
-	<LI>Fixed some bugs with the Keychain handling
-</UL>
+<B>This is unofficial software and unsupported as well</B>.  I've been able to keep up with updates and bug fixes so far, but make no promises.
 
 <h2>Requirements</h2>
 You will need to download and setup the Force.com Migration Tool, which is fairly straightforward 
 in OS X.  Just go to "Setup -> Develop -> Tools" in your org and download the zip and follow the 
 instructions.  You might need to run "ant -diagnostics" to find your ant lib directory.
+
+<h2>Installation from Downloads Page</h2>
+If you go to the Downloads page, there is a zip file. Downloading and unarchiving that should result in a folder with this file, an "install.command" file and a folder named "ForceDotBundle".  If you have the CLI command for TextMate installed, you should just be able to double click "install.command".  Otherwise, after running "install.command", you will need to double click the now renamed parent directory.
 
 <h2>Installation from Finder</h2>
 Fork/download/clone the project. Make sure the resulting folder is named "ForceDotBundle" and rename it if needed.  Go into that folder and double click "move_tools.command" (icon looks like a document with a black box).  If you have the CLI command 
@@ -56,19 +38,38 @@ If the move_tools.sh file won't run for some reason, you can replicate the steps
 	</pre>	
 </OL>
 
+<P>
+<H1>Quick Start</H1>
+<OL>
+	<LI>Once you've installed the bundle, create a new project.
+	<LI>Create a new directory in Finder, name it something reasonable for your project.
+	<LI>Drag the folder to the project pane in TextMate.
+	<LI>Create some kind of scratch file.
+	<LI>Open the empty file.  Now use "Create New Project" from the ForceDotBundle bundle.  A popup will give the overview of the changes. <B>These changes may not appear right away in the project pane</B>.  They will be in Finder.
+	<LI>Update "build.properties" with your username, password and if needed, the login URL (for sandboxes).
+	<LI>If you want to pull down existing files, run "Get Latest". <B>These changes may not appear right away in the project pane</B>.  They will be in Finder.
+	<LI>Or if you just want to be additive, right click on say, classes, and use one of the templates.
+	<LI>Enjoy.
+</OL>
+</P>	
+
+<H2>Enabling Keychain Support</H2>
+ForceDotBundle will swap out the password in build.properties with secured text in OS X's keychain if you have set:
+<pre>
+usekeychainaccess=enabled
+</pre>
+
+in build.properties.  The next step is swap out your password with "password:accountname", highlight that text and then run "Add Password" under
+the Keychain menu in the bundle.  There will be some keychain prompts and then your password will be replaced with just "accountname".
+
+From there on out, the bash will swap out your password in build.properties when it runs a build, and then swap it back when it is done.  I highly recommend 
+this for everyone concerned with having passwords in a text file on your laptop.  Which should be everyone.  The only downside is with multiple builds that execute 
+against build.properties at the same time may wipe the file out.  Working on it.
+
+
 <H2>Enabling OAuth login for REST</H2>
 Not sure if this should be the only source of login or not - but if you want to try using the OAuth endpoints to login instead of SOAP, add "consumerkey" and "privatekey" to build.properties with your Consumer Public and Consumer Secret from a Remote Settings entry.
 
-<h2>Known Bugs</H2>
-The REST/HTML widgets should not be freezing up now.  Please DM me if they are still.
-
-<UL>
-	<LI>consumerkey/private vars have no keychain hook.  Easy to add if there is enough demand.
-</UL>
-
-<P>
-<B>Note:</B> This is unofficial, unsupported software.
-</P>	
 
 <h2>Features</h2>	
 <P>
@@ -149,20 +150,7 @@ The bundle provides the following:
 </P>
 
 
-<P>
-<H1>Quick Start</H1>
-<OL>
-	<LI>Once you've installed the bundle, create a new project.
-	<LI>Create a new directory in Finder, name it something reasonable for your project.
-	<LI>Drag the folder to the project pane in TextMate.
-	<LI>Create some kind of scratch file.
-	<LI>Open the empty file.  Now use "Create New Project" from the ForceDotCom bundle.  A popup will give the overview of the changes. <B>These changes may not appear right away in the project pane</B>.  They will be in Finder.
-	<LI>Update "build.properties" with your username, password and if needed, the login URL (for sandboxes).
-	<LI>If you want to pull down existing files, run "Get Latest". <B>These changes may not appear right away in the project pane</B>.  They will be in Finder.
-	<LI>Or if you just want to be additive, right click on say, classes, and use one of the templates.
-	<LI>Enjoy.
-</OL>
-</P>
+
 <P>
 <H1>Using Keychain</H1>
 For better production, you can now store your passwords in OS X Keychain and refer only to the Keychain account name in build.properties.  
