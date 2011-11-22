@@ -14,7 +14,7 @@ cp result.xml build.xml
 echo "&lt;div style='border:1px solid #ccc; padding: 5px; font-size: 9px'&gt;&lt;pre&gt;"
 . build.properties
 
-if [ ! -f "new.properties" ]
+if [ ! -f "new.properties"]
 	then
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
