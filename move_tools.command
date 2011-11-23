@@ -1,6 +1,6 @@
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 cd $DIR
-if [! -f ~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle ]
+if [ ! -f ~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle ]
 	then
 	mkdir ~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle
 fi
