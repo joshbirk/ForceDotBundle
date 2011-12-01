@@ -50,6 +50,7 @@ If the move_tools.sh file won't run for some reason, you can replicate the steps
 	<LI>If you want to pull down existing files, run "Get Latest". <B>These changes may not appear right away in the project pane</B>.  They will be in Finder.
 	<LI>Or if you just want to be additive, right click on say, classes, and use one of the templates.
 	<LI>Enjoy.
+	<LI>You may need to whitelist your IP for some of the features.
 </OL>
 </P>	
 
@@ -66,6 +67,8 @@ From there on out, the bash will swap out your password in build.properties when
 this for everyone concerned with having passwords in a text file on your laptop.  Which should be everyone.  The only downside is with multiple builds that execute 
 against build.properties at the same time may wipe the file out.  Working on it.
 
+<H2>Using the REST functions (SOQL, Object Describe)</H2>
+Since these use the password grant type, you will likely need to either append your security token to the password, or whitelist your IP.
 
 <H2>Enabling OAuth login for REST</H2>
 Not sure if this should be the only source of login or not - but if you want to try using the OAuth endpoints to login instead of SOAP, add "consumerkey" and "privatekey" to build.properties with your Consumer Public and Consumer Secret from a Remote Settings entry.
