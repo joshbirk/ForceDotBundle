@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>saveActiveFile</string>
+	<key>command</key>
+	<string>echo "Quick Compile"
+cd "$TM_PROJECT_DIRECTORY"
+api=22 #default
+. build.properties
+
+if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	password=$("${TM_BUNDLE_SUPPORT}/keychain.sh" ${password})
+fi
+
+session=0
+#determine session
+if [ -f ".session" ] 
+	then
+	session=$(cat .session)
+else
+	if [ ! -n "${consumerkey+x}" ]
+	then
+		echo "Retrying SOAP Login..."
+		
+		data=$(curl -s -d "&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:enterprise.soap.sforce.com\"&gt;&lt;soapenv:Body&gt;&lt;urn:login&gt;&lt;urn:username&gt;${username}&lt;/urn:username&gt;&lt;urn:password&gt;${password}&lt;/urn:password&gt;&lt;/urn:login&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;" -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction:'' " ${serverurl}/services/Soap/u/11.1)
+		echo $data &gt; response.xml
+		session=$(sed -n -e 's/.*&lt;sessionId&gt;\(.*\)&lt;\/sessionId&gt;.*/\1/p' response.xml)
+		rm response.xml
+	else
+		echo "Retrying OAUTH Login..."
+		json=$(curl -d "grant_type=password&amp;client_id=${consumerkey}&amp;client_secret=${privatekey}&amp;username=${username}&amp;password=${password}" ${serverurl}/services/oauth2/token)
+		IFS=':' read -ra data &lt;&lt;&lt; "$json"
+	
+		session1=${data[7]}
+		session0=${session1:1}
+		session=${session0/\"\}/}
+	fi
+	echo $session &gt; .session
+fi
+
+code=$(cat ${TM_FILEPATH} | tr '\n' '\n\r')
+
+if [ ${TM_FILENAME##*.} == 'cls' ]
+	then
+echo "&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:apex=\"http://soap.sforce.com/2006/08/apex\"&gt;
+   &lt;soapenv:Header&gt;
+    &lt;apex:DebuggingHeader&gt;
+	         &lt;apex:categories&gt;
+	            &lt;apex:category&gt;Apex_code&lt;/apex:category&gt;
+	            &lt;apex:level&gt;FINEST&lt;/apex:level&gt;
+	         &lt;/apex:categories&gt;
+	         &lt;apex:debugLevel&gt;DETAIL&lt;/apex:debugLevel&gt;
+	      &lt;/apex:DebuggingHeader&gt;  
+	&lt;apex:SessionHeader&gt;
+      &lt;apex:sessionId&gt;${session}&lt;/apex:sessionId&gt;
+      &lt;/apex:SessionHeader&gt;
+   &lt;/soapenv:Header&gt;
+   &lt;soapenv:Body&gt;
+      &lt;apex:compileClasses&gt;
+         &lt;apex:scripts&gt;&lt;![CDATA[${code}]]&gt;&lt;/apex:scripts&gt;
+      &lt;/apex:compileClasses&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;" &gt; request.xml
+fi
+
+if [ ${TM_FILENAME##*.} == 'trigger' ]
+	then
+echo "&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:apex=\"http://soap.sforce.com/2006/08/apex\"&gt;
+   &lt;soapenv:Header&gt;
+    &lt;apex:DebuggingHeader&gt;
+	         &lt;apex:categories&gt;
+	            &lt;apex:category&gt;Apex_code&lt;/apex:category&gt;
+	            &lt;apex:level&gt;FINEST&lt;/apex:level&gt;
+	         &lt;/apex:categories&gt;
+	         &lt;apex:debugLevel&gt;DETAIL&lt;/apex:debugLevel&gt;
+	      &lt;/apex:DebuggingHeader&gt;  
+	&lt;apex:SessionHeader&gt;
+      &lt;apex:sessionId&gt;${session}&lt;/apex:sessionId&gt;
+      &lt;/apex:SessionHeader&gt;
+   &lt;/soapenv:Header&gt;
+   &lt;soapenv:Body&gt;
+      &lt;apex:compileTriggers&gt;
+         &lt;apex:scripts&gt;&lt;![CDATA[${code}]]&gt;&lt;/apex:scripts&gt;
+      &lt;/apex:compileTriggers&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;" &gt; request.xml
+fi
+
+if [ ${TM_FILENAME##*.} == 'page' ]
+	then
+echo "&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:partner.soap.sforce.com\" xmlns:urn1=\"urn:sobject.partner.soap.sforce.com\"&gt;
+   &lt;soapenv:Header&gt;
+   &lt;urn:SessionHeader&gt;
+      &lt;urn:sessionId&gt;${session}&lt;/urn:sessionId&gt;
+      &lt;/urn:SessionHeader&gt;
+   &lt;/soapenv:Header&gt;
+   &lt;soapenv:Body&gt;
+      &lt;urn:upsert&gt;
+         &lt;urn:externalIDFieldName&gt;Name&lt;/urn:externalIDFieldName&gt;
+		&lt;urn:sObjects&gt;
+            	&lt;urn1:type&gt;ApexPage&lt;/urn1:type&gt;
+			&lt;Name&gt;${TM_FILENAME%.*}&lt;/Name&gt;
+        		&lt;MasterLabel&gt;${TM_FILENAME%.*}&lt;/MasterLabel&gt;
+        		&lt;Markup&gt;&lt;![CDATA[${code}]]&gt;&lt;/Markup&gt;   			&lt;/urn:sObjects&gt;
+      &lt;/urn:upsert&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;" &gt; request.xml
+fi
+
+if [ ${TM_FILENAME##*.} == 'component' ]
+	then
+echo "&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:partner.soap.sforce.com\" xmlns:urn1=\"urn:sobject.partner.soap.sforce.com\"&gt;
+   &lt;soapenv:Header&gt;
+   &lt;urn:SessionHeader&gt;
+      &lt;urn:sessionId&gt;${session}&lt;/urn:sessionId&gt;
+      &lt;/urn:SessionHeader&gt;
+   &lt;/soapenv:Header&gt;
+   &lt;soapenv:Body&gt;
+      &lt;urn:upsert&gt;
+         &lt;urn:externalIDFieldName&gt;Name&lt;/urn:externalIDFieldName&gt;
+		&lt;urn:sObjects&gt;
+            	&lt;urn1:type&gt;ApexComponent&lt;/urn1:type&gt;
+			&lt;Name&gt;${TM_FILENAME%.*}&lt;/Name&gt;
+        		&lt;MasterLabel&gt;${TM_FILENAME%.*}&lt;/MasterLabel&gt;
+        		&lt;Markup&gt;&lt;![CDATA[${code}]]&gt;&lt;/Markup&gt;   			&lt;/urn:sObjects&gt;
+      &lt;/urn:upsert&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;" &gt; request.xml
+fi
+
+if [[ ${TM_FILENAME##*.} == 'cls' || ${TM_FILENAME##*.} == 'trigger' ]]
+	then
+
+data=$(curl -s --data-binary @request.xml  -H "Content-Type: text/xml; charset=utf-8" -H "X-PrettyPrint:1" -H "SOAPAction:'' " https://${pod}-api.salesforce.com/services/Soap/s/${api}.0)
+echo $data &gt; response.xml
+
+fi 
+
+if [[ ${TM_FILENAME##*.} == 'page' || ${TM_FILENAME##*.} == 'component' ]]
+	then
+
+data=$(curl -s --data-binary @request.xml  -H "Content-Type: text/xml; charset=utf-8" -H "X-PrettyPrint:1" -H "SOAPAction:'' " https://${pod}.salesforce.com/services/Soap/u/${api}.0)
+echo $data &gt; response.xml
+fi		
+
+success="false"
+debuglog=$(sed -n -e 's/.*&lt;debugLog&gt;\(.*\)&lt;\/debugLog&gt;.*/\1/p' response.xml)
+error=$(sed -n -e 's/.*&lt;problem&gt;\(.*\)&lt;\/problem&gt;.*/\1/p' response.xml)
+success=$(sed -n -e 's/.*&lt;success&gt;\(.*\)&lt;\/success&gt;.*/\1/p' response.xml)
+faultstring=$(sed -n -e 's/.*&lt;faultstring&gt;\(.*\)&lt;\/faultstring&gt;.*/\1/p' response.xml)
+message=$(sed -n -e 's/.*&lt;message&gt;\(.*\)&lt;\/message&gt;.*/\1/p' response.xml)
+sessioncheck=$(grep -ic "INVALID_SESSION" "response.xml")
+
+if [ $success == 'true' ]
+	then
+	echo "Compiled Successfully"
+fi
+
+#rm request.xml
+#rm response.xml
+
+echo $debuglog | tr '\|' '\n'
+echo $error | tr '\|' '\n'
+echo $faultstring | tr '\|' '\n'
+echo $message | tr '\|' '\n'
+
+if [ "$sessioncheck" != "0" ]
+	then
+	echo 'Invalid Session.  Clearing old session, please try again.'
+	rm .session
+fi
+
+
+
+
+</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>^~@</string>
+	<key>name</key>
+	<string>Quick Compile</string>
+	<key>output</key>
+	<string>showAsTooltip</string>
+	<key>uuid</key>
+	<string>735F8CA2-FDD1-4CB4-B1ED-3CCA484B0473</string>
+</dict>
+</plist>

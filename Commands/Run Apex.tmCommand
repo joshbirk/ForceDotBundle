@@ -5,11 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>echo "&lt;style&gt;body { margin: 0px; padding: 0px; background-color:#efefef }&lt;/style&gt;"
-echo "&lt;div style='width:100%;background-image: -webkit-linear-gradient(left , rgb(76,142,255) 12%, rgb(105,199,250) 56%, rgb(255,255,255) 78%);'&gt;&lt;h2&gt;Query: ${TM_SELECTED_TEXT}&lt;/h2&gt;&lt;/div&gt;"
-echo "&lt;div style='background-color: white; border:1px solid #999; font-family: Tahoma MS, Lucida, Verdana; padding: 5px; color: #666; margin: 2px;'&gt;"
-echo "&lt;pre id='output_pre'&gt;"
-
+	<string>echo "Running Apex"
 cd "$TM_PROJECT_DIRECTORY"
 api=22 #default
 . build.properties
@@ -19,28 +15,12 @@ if [ ${usekeychainaccess} == 'enabled' ]
 	password=$("${TM_BUNDLE_SUPPORT}/keychain.sh" ${password})
 fi
 
-query=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${TM_SELECTED_TEXT}")
-
 session=0
 #determine session
 if [ -f ".session" ] 
 	then
 	session=$(cat .session)
-fi
-
-#make REST callout
-echo "data = " &gt; "${TM_BUNDLE_SUPPORT}/data.json"
-data=$(curl -s https://${pod}.salesforce.com/services/data/v${api}.0/query/?q=${query} -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
-echo $data
-echo $data &gt;&gt; "${TM_BUNDLE_SUPPORT}/data.json"
-
-#check to see if session expired
-sessioncheck=$(grep -ic "INVALID_SESSION" "data.json")
-if [ "$sessioncheck" != "0" ]
-	then
-	rm data.json
-	rm .session
-	
+else
 	if [ ! -n "${consumerkey+x}" ]
 	then
 		echo "Retrying SOAP Login..."
@@ -60,20 +40,53 @@ if [ "$sessioncheck" != "0" ]
 		session=${session0/\"\}/}
 	fi
 	echo $session &gt; .session
-	
-	#make REST callout
-	echo "data = " &gt; data.json
-	data=$(curl -s https://${pod}.salesforce.com/services/data/v${api}.0/query/?q=${query} -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
-	echo $data
-	echo $data &gt;&gt; "${TM_BUNDLE_SUPPORT}/data.json"
 fi
 
-#move to HTML widget
-echo "&lt;/pre&gt;&lt;/div&gt;&lt;script&gt;window.location = 'file://${TM_BUNDLE_SUPPORT}/soql.html'&lt;/script&gt;"
+code=$(cat ${TM_FILEPATH} | tr '\n' '\n\r')
 
-#cleanup
-sleep 1
-rm "${TM_BUNDLE_SUPPORT}/data.json"
+echo "&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:apex=\"http://soap.sforce.com/2006/08/apex\"&gt;
+   &lt;soapenv:Header&gt;
+    &lt;apex:DebuggingHeader&gt;
+	         &lt;apex:categories&gt;
+	            &lt;apex:category&gt;Apex_code&lt;/apex:category&gt;
+	            &lt;apex:level&gt;FINEST&lt;/apex:level&gt;
+	         &lt;/apex:categories&gt;
+	         &lt;apex:debugLevel&gt;DETAIL&lt;/apex:debugLevel&gt;
+	      &lt;/apex:DebuggingHeader&gt;  
+	&lt;apex:SessionHeader&gt;
+      &lt;apex:sessionId&gt;${session}&lt;/apex:sessionId&gt;
+      &lt;/apex:SessionHeader&gt;
+   &lt;/soapenv:Header&gt;
+   &lt;soapenv:Body&gt;
+      &lt;apex:executeAnonymous&gt;
+         &lt;apex:String&gt;
+		  &lt;![CDATA[
+			${TM_SELECTED_TEXT}
+		   ]]&gt;
+		&lt;/apex:String&gt;
+      &lt;/apex:executeAnonymous&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;" &gt; request.xml
+
+data=$(curl -s --data @request.xml  -H "Content-Type: text/xml; charset=utf-8" -H "X-PrettyPrint:1" -H "SOAPAction:'' " https://${pod}-api.salesforce.com/services/Soap/s/${api}.0)
+
+echo ''
+		
+echo $data &gt; response.xml
+debuglog=$(sed -n -e 's/.*&lt;debugLog&gt;\(.*\)&lt;\/debugLog&gt;.*/\1/p' response.xml)
+error=$(sed -n -e 's/.*&lt;compileProblem&gt;\(.*\)&lt;\/compileProblem&gt;.*/\1/p' response.xml)
+sessioncheck=$(grep -ic "INVALID_SESSION" "response.xml")
+rm request.xml
+rm response.xml
+
+echo $debuglog | tr '\|' '\n'
+echo $error | tr '\|' '\n'
+
+if [ "$sessioncheck" != "0" ]
+	then
+	echo '\nInvalid Session.  Clearing old session, please try again'
+	rm .session
+fi
 
 </string>
 	<key>fallbackInput</key>
@@ -81,12 +94,12 @@ rm "${TM_BUNDLE_SUPPORT}/data.json"
 	<key>input</key>
 	<string>selection</string>
 	<key>keyEquivalent</key>
-	<string>^~@/</string>
+	<string>^~@f</string>
 	<key>name</key>
-	<string>Run SOQL</string>
+	<string>Run Apex</string>
 	<key>output</key>
-	<string>showAsHTML</string>
+	<string>openAsNewDocument</string>
 	<key>uuid</key>
-	<string>F88FB49A-A2FD-4868-94EE-477B26013C66</string>
+	<string>F1A2710D-700D-43AC-99CF-31CA6502FDBF</string>
 </dict>
 </plist>

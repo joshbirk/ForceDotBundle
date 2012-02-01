@@ -13,6 +13,8 @@ echo "&lt;script&gt;window.location.href='https://${pod}.salesforce.com/apexpage
 </string>
 	<key>input</key>
 	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>~@f</string>
 	<key>name</key>
 	<string>Visualforce Reference</string>
 	<key>output</key>

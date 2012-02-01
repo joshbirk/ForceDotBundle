@@ -11,27 +11,47 @@ echo "&lt;div style='background-color: white; border:1px solid #999; font-family
 echo "&lt;pre id='output_pre'&gt;"
 
 cd "$TM_PROJECT_DIRECTORY"
+api=22 #default
 . build.properties
 
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
-	password=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools/keychain.sh ${password})
+	password=$("${TM_BUNDLE_SUPPORT}/keychain.sh" ${password})
 fi
 
-cd ~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools
 dir=$(pwd)
 
+session=0
 #determine session
 if [ -f ".session" ] 
 	then
 	session=$(cat .session)
+fi
+
+#make REST callout
+echo "data = " &gt; "${TM_BUNDLE_SUPPORT}/data.json"
+data=$(curl -s https://${pod}.salesforce.com/services/data/v{$api}.0/sobjects/${TM_SELECTED_TEXT}/describe -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
+echo $data
+echo $data &gt;&gt; "${TM_BUNDLE_SUPPORT}/data.json"
+
+#check to see if session expired
+sessioncheck=$(grep -ic "INVALID_SESSION" "${TM_BUNDLE_SUPPORT}/data.json")
+if [ "$sessioncheck" != "0" ]
+	then
+	rm .session
+	
 	if [ ! -n "${consumerkey+x}" ]
 	then
-		echo "SOAP Login..."
-		session=$(echo  ${username}:${password} | php -q ./loginasme.php)
+		echo "Retrying SOAP Login..."
+		
+		data=$(curl -s -d "&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:enterprise.soap.sforce.com\"&gt;&lt;soapenv:Body&gt;&lt;urn:login&gt;&lt;urn:username&gt;${username}&lt;/urn:username&gt;&lt;urn:password&gt;${password}&lt;/urn:password&gt;&lt;/urn:login&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;" -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction:'' " ${serverurl}/services/Soap/u/11.1)
+		echo $data &gt; response.xml
+
+		session=$(sed -n -e 's/.*&lt;sessionId&gt;\(.*\)&lt;\/sessionId&gt;.*/\1/p' response.xml)
+		rm response.xml
 	else
-		echo "OAUTH Login..."
-		json=$(curl -d "grant_type=password&amp;client_id=${consumerkey}&amp;client_secret=${privatekey}&amp;username=${username}&amp;password=${password}" https://login.salesforce.com/services/oauth2/token)
+		echo "Retrying OAUTH Login..."
+		json=$(curl -d "grant_type=password&amp;client_id=${consumerkey}&amp;client_secret=${privatekey}&amp;username=${username}&amp;password=${password}" ${serverurl}/services/oauth2/token)
 		IFS=':' read -ra data &lt;&lt;&lt; "$json"
 	
 		session1=${data[7]}
@@ -39,35 +59,20 @@ if [ -f ".session" ]
 		session=${session0/\"\}/}
 	fi
 	echo $session &gt; .session
-fi
-
-#make REST callout
-echo "data = " &gt; data.json
-data=$(curl -s https://${pod}.salesforce.com/services/data/v20.0/sobjects/${TM_SELECTED_TEXT}/describe -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
-echo $data
-echo $data &gt;&gt; data.json
-
-#check to see if session expired
-sessioncheck=$(grep -ic "INVALID_SESSION" "data.json")
-if [ "$sessioncheck" != "0" ]
-	then
-	rm data.json
-	rm .session
-	session=$(echo  ${username}:${password} | php -q ./loginasme.php)
-	echo $session &gt; .session
+	
+	#make REST callout
 	echo "data = " &gt; data.json
-	data=$(curl -s https://${pod}.salesforce.com/services/data/v22.0/sobjects/${TM_SELECTED_TEXT}/	describe -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
-	echo $data &gt;&gt; data.json
+	data=$(curl -s https://${pod}.salesforce.com/services/data/v20.0/sobjects/${TM_SELECTED_TEXT}/describe -H "Authorization: OAuth ${session}" -H "X-PrettyPrint:1")
+	echo $data
+	echo $data &gt;&gt; "${TM_BUNDLE_SUPPORT}/data.json"
 fi
-
-sleep 1
 
 #move to HTML widget
-echo "&lt;/pre&gt;&lt;/div&gt;&lt;script&gt;window.location = 'file://${dir}/objectinfo.html'&lt;/script&gt;"
+echo "&lt;/pre&gt;&lt;/div&gt;&lt;script&gt;window.location = 'file://${TM_BUNDLE_SUPPORT}/objectinfo.html'&lt;/script&gt;"
 
 #cleanup
 sleep 1
-rm data.json
+rm "${TM_BUNDLE_SUPPORT}/data.json"
 
 </string>
 	<key>input</key>

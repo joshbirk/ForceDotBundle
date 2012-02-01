@@ -13,6 +13,8 @@ echo "&lt;script&gt;window.location.href='http://www.salesforce.com/us/developer
 </string>
 	<key>input</key>
 	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>~@f</string>
 	<key>name</key>
 	<string>Apex Reference</string>
 	<key>output</key>

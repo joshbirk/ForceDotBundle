@@ -18,7 +18,7 @@ if [ ! -f "new.properties" ]
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
 	cp build.properties build.bak
-	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools/keychain.sh ${prodpassword})
+	shellpassword=$("${TM_BUNDLE_SUPPORT}/keychain.sh" ${prodpassword})
 	sed "s/${prodpassword}/${shellpassword}/" build.properties &gt; new.properties
 	cp new.properties build.properties
 fi

@@ -11,6 +11,8 @@
 echo "&lt;script&gt;window.location.href='https://${pod}.salesforce.com/101'&lt;/script&gt;"</string>
 	<key>input</key>
 	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>~@f</string>
 	<key>name</key>
 	<string>Custom Labels</string>
 	<key>output</key>

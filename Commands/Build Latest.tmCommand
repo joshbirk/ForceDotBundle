@@ -7,6 +7,7 @@
 	<key>command</key>
 	<string>cd "$TM_PROJECT_DIRECTORY"
 . build.properties
+
 echo "&lt;style&gt;body { margin: 0px; padding: 0px; background-color:#efefef }&lt;/style&gt;"
 echo "&lt;div style='width:100%;background-image: -webkit-linear-gradient(left , rgb(76,142,255) 12%, rgb(105,199,250) 56%, rgb(255,255,255) 78%);'&gt;&lt;h2&gt;Building Latest&lt;/h2&gt;&lt;/div&gt;"
 
@@ -15,7 +16,7 @@ if [ ! -f "new.properties" ]
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
 	cp build.properties build.bak
-	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools/keychain.sh ${password})
+	shellpassword=$("${TM_BUNDLE_SUPPORT}/keychain.sh" ${password})
 	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
 	cp new.properties build.properties
 fi

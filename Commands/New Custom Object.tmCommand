@@ -11,6 +11,8 @@
 echo "&lt;script&gt;window.location.href='https://${pod}.salesforce.com/01I/e?setupid=CustomObjects'&lt;/script&gt;"</string>
 	<key>input</key>
 	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>~@f</string>
 	<key>name</key>
 	<string>New Custom Object</string>
 	<key>output</key>

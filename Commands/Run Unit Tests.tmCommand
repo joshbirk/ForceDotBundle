@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>echo "&lt;style&gt;body { margin: 0px; padding: 0px; background-color:#efefef }&lt;/style&gt;"
+echo "&lt;div style='width:100%;background-image: -webkit-linear-gradient(left , rgb(76,142,255) 12%, rgb(105,199,250) 56%, rgb(255,255,255) 78%);'&gt;&lt;h2&gt;Running Tests: ${TM_FILENAME%.*}&lt;/h2&gt;&lt;/div&gt;"
+
+cd "$TM_PROJECT_DIRECTORY"
+api=22 #default
+. build.properties
+
+if [ ${usekeychainaccess} == 'enabled' ]
+	then 
+	password=$("${TM_BUNDLE_SUPPORT}/keychain.sh" ${password})
+fi
+
+session=0
+#determine session
+if [ -f ".session" ] 
+	then
+	session=$(cat .session)
+else
+	if [ ! -n "${consumerkey+x}" ]
+	then
+		echo "Retrying SOAP Login..."
+		
+		data=$(curl -s -d "&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:enterprise.soap.sforce.com\"&gt;&lt;soapenv:Body&gt;&lt;urn:login&gt;&lt;urn:username&gt;${username}&lt;/urn:username&gt;&lt;urn:password&gt;${password}&lt;/urn:password&gt;&lt;/urn:login&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;" -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction:'' " ${serverurl}/services/Soap/u/11.1)
+		echo $data
+		echo $data &gt; response.xml
+
+		session=$(sed -n -e 's/.*&lt;sessionId&gt;\(.*\)&lt;\/sessionId&gt;.*/\1/p' response.xml)
+	else
+		echo "Retrying OAUTH Login..."
+		json=$(curl -d "grant_type=password&amp;client_id=${consumerkey}&amp;client_secret=${privatekey}&amp;username=${username}&amp;password=${password}" ${serverurl}/services/oauth2/token)
+		IFS=':' read -ra data &lt;&lt;&lt; "$json"
+	
+		session1=${data[7]}
+		session0=${session1:1}
+		session=${session0/\"\}/}
+	fi
+	echo $session &gt; .session
+fi
+
+
+echo "&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:apex=\"http://soap.sforce.com/2006/08/apex\"&gt;
+   &lt;soapenv:Header&gt;
+      &lt;apex:DebuggingHeader&gt;
+	         &lt;apex:categories&gt;
+	            &lt;apex:category&gt;Apex_code&lt;/apex:category&gt;
+	            &lt;apex:level&gt;FINEST&lt;/apex:level&gt;
+	         &lt;/apex:categories&gt;
+	         &lt;apex:debugLevel&gt;DETAIL&lt;/apex:debugLevel&gt;
+	      &lt;/apex:DebuggingHeader&gt;
+      &lt;apex:SessionHeader&gt;
+         &lt;apex:sessionId&gt;${session}&lt;/apex:sessionId&gt;
+      &lt;/apex:SessionHeader&gt;
+   &lt;/soapenv:Header&gt;
+   &lt;soapenv:Body&gt;
+      &lt;apex:runTests&gt;
+         &lt;apex:RunTestsRequest&gt;
+            &lt;apex:classes&gt;${TM_FILENAME%.*}&lt;/apex:classes&gt;
+         &lt;/apex:RunTestsRequest&gt;
+      &lt;/apex:runTests&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;" &gt; request.xml
+
+echo "&lt;div style='background-color: white; border:1px solid #999; font-family: Tahoma MS, Lucida, Verdana; padding: 5px; color: #666; margin: 2px;'&gt;"
+echo "&lt;pre id='output_pre'&gt;"
+
+data=$(curl -s --data @request.xml  -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction:'' " https://${pod}-api.salesforce.com/services/Soap/s/${api}.0)
+		
+echo $data &gt; response.xml
+debuglog=$(sed -n -e 's/.*&lt;debugLog&gt;\(.*\)&lt;\/debugLog&gt;.*/\1/p' response.xml)
+error=$(sed -n -e 's/.*&lt;compileProblem&gt;\(.*\)&lt;\/compileProblem&gt;.*/\1/p' response.xml)
+sessioncheck=$(grep -ic "INVALID_SESSION" "response.xml")
+rm request.xml
+rm response.xml
+
+echo $debuglog | tr '\|' '\n'
+echo $error | tr '\|' '\n'
+
+echo "&lt;/pre&gt;"
+echo "&lt;div id='output' style='color:black'&gt;&lt;/div&gt;&lt;/div&gt;"
+
+echo "&lt;script&gt;"
+echo "output = document.getElementById('output');
+output.innerHTML = document.getElementById('output_pre').innerHTML;
+document.getElementById('output_pre').style.display='none';
+output.innerHTML = output.innerHTML.replace(/\n/gi,'&lt;br /&gt;');
+output.innerHTML = output.innerHTML.replace(/BUILD SUCCESSFUL/gi,'&lt;span style=font-weight:bold;color:#526F35&gt;BUILD SUCCESSFUL&lt;/span&gt;');
+output.innerHTML = output.innerHTML.replace(/BUILD FAILED/gi,'&amp;nbsp;&lt;span style=font-weight:bold;color:#CD2626&gt;BUILD FAILED&lt;/span&gt;');
+output.innerHTML = output.innerHTML.replace(/ERROR:/gi,'&lt;HR /&gt;ERROR:');
+&lt;/script&gt;"
+
+
+
+echo "&lt;hr&gt;&lt;button onclick='self.close();' style='border: 1px solid black; background-color:#ccc'&gt;Done&lt;/button&gt;"
+if [ "$sessioncheck" != "0" ]
+	then
+	echo '&lt;BR /&gt;Invalid Session.  Clearing old session, please try again'
+	rm .session
+fi
+</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>^~@f</string>
+	<key>name</key>
+	<string>Run Unit Tests</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>uuid</key>
+	<string>8837B373-21CE-4992-845A-17C9372F1C46</string>
+</dict>
+</plist>

@@ -8,16 +8,16 @@
 	<string>cd "$TM_PROJECT_DIRECTORY"
 . build.properties
 
-echo "&lt;script&gt;window.location.href='https://${pod}.salesforce.com/p/setup/layout/AddApexDebugLogUser'&lt;/script&gt;"</string>
+echo "&lt;script&gt;window.location.href='https://${pod}.salesforce.com/_ui/common/apex/debug/ApexCSIPage'&lt;/script&gt;"</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
 	<string>~@f</string>
 	<key>name</key>
-	<string>New Debug Log</string>
+	<string>Open Dev Console</string>
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>uuid</key>
-	<string>76FAF4D2-46D2-4C2D-B758-04D951BBCF0F</string>
+	<string>AC2A7ACF-0D1C-4648-887F-9D7A456B9329</string>
 </dict>
 </plist>

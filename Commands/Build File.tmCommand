@@ -8,54 +8,75 @@
 	<string>echo "&lt;style&gt;body { margin: 0px; padding: 0px; background-color:#efefef }&lt;/style&gt;"
 echo "&lt;div style='width:100%;background-image: -webkit-linear-gradient(left , rgb(76,142,255) 12%, rgb(105,199,250) 56%, rgb(255,255,255) 78%);'&gt;&lt;h2&gt;Build File: ${TM_FILENAME%.*}&lt;/h2&gt;&lt;/div&gt;"
 
-if [ ${TM_FILENAME##*.} == 'xml' ] 
-then
-echo 'Meta files are deployed with the normal files.'
-fi
+#dir=pwd
 
+cd "$TM_PROJECT_DIRECTORY"
+api=22 #default
+. build.properties
 
-if [ ! -f "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml" ] 
-then
 
 if [ ${TM_FILENAME##*.} == 'cls' ]
-then echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ApexClass xmlns="http://soap.sforce.com/2006/04/metadata"&gt;&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;&lt;status&gt;Active&lt;/status&gt;&lt;/ApexClass&gt;' &gt; "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml"
+then 
+cd classes
+if [ ! -f "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml" ] 
+then
+echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+&lt;ApexClass xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;
+    &lt;apiVersion&gt;${api}.0&lt;/apiVersion&gt;
+    &lt;status&gt;Active&lt;/status&gt;
+&lt;/ApexClass&gt;" &gt; "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml"
+fi
 fi
 
 if [ ${TM_FILENAME##*.} == 'page' ]
-then echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+then 
+cd pages
+if [ ! -f "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml" ] 
+then 
+echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
 &lt;ApexPage xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;
-&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;
+&lt;apiVersion&gt;${api}.0&lt;/apiVersion&gt;
 &lt;label&gt;${TM_FILENAME%.*}&lt;/label&gt;
 &lt;/ApexPage&gt;" &gt; "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml"
 fi
+fi
 
 if [ ${TM_FILENAME##*.} == 'component' ]
-then echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+then 
+cd components
+if [ ! -f "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml" ] 
+then 
+echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
 &lt;ApexComponent xmlns=\"http://soap.sforce.com/2006/04/metadata\"&gt;
-&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;
+&lt;apiVersion&gt;${api}.0&lt;/apiVersion&gt;
 &lt;label&gt;${TM_FILENAME%.*}&lt;/label&gt;
 &lt;/ApexComponent&gt;" &gt; "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml"
 fi
+fi
 
 if [ ${TM_FILENAME##*.} == 'trigger' ]
-then echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+then 
+cd triggers
+if [ ! -f "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml" ] 
+then 
+echo '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;ApexTrigger xmlns="http://soap.sforce.com/2006/04/metadata"&gt;
-&lt;apiVersion&gt;22.0&lt;/apiVersion&gt;
+&lt;apiVersion&gt;${api}.0&lt;/apiVersion&gt;
 &lt;status&gt;Active&lt;/status&gt;
 &lt;/ApexTrigger&gt;' &gt; "${TM_FILENAME%.*}.${TM_FILENAME##*.}-meta.xml"
 fi
-
 fi
 
+
+
 cd "$TM_PROJECT_DIRECTORY"
-. build.properties
 
 if [ ! -f "new.properties" ] 
 	then
 if [ ${usekeychainaccess} == 'enabled' ]
 	then 
 	cp build.properties build.bak
-	shellpassword=$(~/Library/Application\ Support/TextMate/Bundles/ForceDotBundle.tmbundle/Tools/keychain.sh ${password})
+	shellpassword=$("${TM_BUNDLE_SUPPORT}/keychain.sh" ${password})
 	sed "s/${password}/${shellpassword}/" build.properties &gt; new.properties
 	cp new.properties build.properties
 fi

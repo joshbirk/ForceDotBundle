@@ -8,6 +8,9 @@
 	<string>cd "$TM_PROJECT_DIRECTORY"
 . build.properties
 
+cd "${TM_BUNDLE_SUPPORT}"
+rm .session
+
 echo "&lt;script&gt;window.location.href='https://${pod}.salesforce.com/secur/logout.jsp'&lt;/script&gt;"
 </string>
 	<key>input</key>
